@@ -44,7 +44,7 @@ Za Magarca postoji i posebni špil, gde su četiri iste karte jednakih boja i sa
 
 Komplet sadrži 8 puta po 4 karte jednakih boja i sa različitim životinjama, a pored Magarca
 koji se koristi u igri, postoji i jedan rezervni, imajući u vidu, da se u dečjoj igri, često po
-neka karta i izgubi. U igri može biti 3, do 8 igrača, a uviek je isto toliko i kompleta, od po
+neka karta i izgubi. U igri može biti 3, do 8 igrača, a uvek je isto toliko i kompleta, od po
 četiri životinje, plus jedan Magarac, koji je ovde obavezan.
 
 
