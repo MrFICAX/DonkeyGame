@@ -8,7 +8,7 @@ namespace DataAccess.Models
 {
     public class Card
     {
-        public int Id { get; set; }
+        public int CardID { get; set; }
 
         public int Number { get; set; }
 

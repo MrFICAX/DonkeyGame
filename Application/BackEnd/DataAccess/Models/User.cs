@@ -18,6 +18,11 @@ namespace DataAccess.Models
 
         public string Token { get; set; }
 
-
+        public User(string userName, string password, string email)
+        {
+            this.UserName = userName;
+            this.Password = password;
+            this.Email = email;
+        }
     }
 }
