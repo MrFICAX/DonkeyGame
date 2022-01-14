@@ -1,0 +1,14 @@
+.textfield{
+    margin: 3px;
+    padding: 10px;
+}
+
+.DonkeyGameTitle{
+    font-size: 50px;
+    color: aquamarine;
+}
+
+.loginBox *{
+    padding: 3px;
+    margin: 10px;
+}
