@@ -72,7 +72,7 @@ export default class LoginContainer extends Component {
   async submitLogin(user) {
     //localStorage.setItem("allMaps", JSON.stringify([]));
     //await this.handleGetMaps();
-    await fetch("https://localhost:44396/User/LogIn", {
+    await fetch("https://localhost:7225/User/LogIn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -82,8 +82,8 @@ export default class LoginContainer extends Component {
       if (res.ok) {
         res.json().then(d => {
           localStorage.token = d.token;
-          localStorage.userID = d.id;
-          localStorage.username = d.username;
+          localStorage.userID = d.userID;
+          localStorage.username = d.userName;
           localStorage.isAuthenticated = true;
           if (localStorage.getItem("redirect"))
             window.location.href = localStorage.getItem("redirect");
@@ -92,7 +92,8 @@ export default class LoginContainer extends Component {
         })
       } else {
         this.setState({
-          errors: { message: res.message }
+          errors: { message: "Profile not found!" },
+          user: { username: "", email: "", password: "", pwconfirm: "" }
         });
       }
     })
@@ -104,6 +105,7 @@ export default class LoginContainer extends Component {
   validateForm(event) {
     event.preventDefault();
     var payload = validateLoginForm(this.state.user);
+    console.log(payload);
     if (payload.success) {
       this.setState({
         errors: {}
@@ -114,7 +116,7 @@ export default class LoginContainer extends Component {
       };
       this.submitLogin(user);
     } else {
-      const errors = payload.errors;
+      const errors = "Input all fields!";
       this.setState({
         errors
       });

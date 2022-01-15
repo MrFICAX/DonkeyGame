@@ -3,6 +3,8 @@ form {
 }
 
 .loginBox {
+  padding: 3px;
+  margin: 10px;
   width: 30%;
   text-align: center;
   position: relative;
@@ -149,8 +151,13 @@ h1{
   font-weight: bold;
   font-size: large;
   display: flex;
-  flex-direction: column;
+  background-color: tan;
+  flex-direction: row;
   align-items: center;
+  padding: 5px;
+}
+.logoutDiv *{
+  padding: 15px;;
 }
 
 .logoutBtn{
@@ -166,11 +173,12 @@ h1{
 
 .lobbyDiv{
   display:flex;
-  flex-direction:column;
+  flex-direction:row;
   align-items:center;
+  justify-content: space-between;
   font-size: large;
   background-color: #917153;
-  width: 40%;
+  width: 70%;
   margin:auto;
 }
 

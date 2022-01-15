@@ -1,0 +1,40 @@
+h1, h2{
+    color: purple;
+}
+
+.TitleDiv{
+    background-color: yellowgreen;
+    padding: 1%;
+    margin-bottom: 1%;
+    
+}
+.pageTitle{
+    font-size: 60px;
+    align-content: center;
+}
+.createGame, .searchGame{
+    text-align: center;
+  position: relative;
+  padding: 40px;
+  background-color: yellowgreen;
+    
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
+}
+
+.tabela{
+    display: flex;
+    justify-content: center;
+}
+.DivSveTabele{
+
+}
+.DivSveTabele:hover *{
+    color: rgb(227, 251, 7);
+}
+.DivJednaTabela{
+    margin: 5px;
+    padding: 5px;   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
