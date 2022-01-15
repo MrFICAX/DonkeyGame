@@ -7,7 +7,6 @@ import React from "react";
 // import "./style/index.css";
 import Login from './Login'
 import SearchComponent from "./SearchBar";
-import GamePage from "./GamePage";
 
 import {
   BrowserRouter as Router,
@@ -15,6 +14,7 @@ import {
   Route
 } from "react-router-dom";
 import SignUp from "./SignUp";
+import StartPage from "./StartPage";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/search" element={<SearchComponent />} />
-        <Route path="/gamePage" element={<GamePage />} />
+        <Route path="/gamePage" element={<StartPage />} />
       </Routes>
     </Router>
   );

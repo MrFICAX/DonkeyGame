@@ -87,39 +87,42 @@ export default class SignUpContainer extends Component {
   //       }  
   //   }    
   // }
-  
+
   async submitSignup(user) {
     //localStorage.setItem("allMaps", JSON.stringify([]));
     //await this.handleGetMaps();
-    await fetch("https://localhost:44396/User/SignUp", { method: "POST",
-        headers: {
+    await fetch("https://localhost:44396/User/SignUp", {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "no-cors"
-        },
-        body: JSON.stringify({ "userName": user.usr, "password": user.pw, "email": user.email, token:"" })
+      },
+      body: JSON.stringify({ "userName": user.usr, "password": user.pw, "email": user.email, token: "" })
     }).then(res => {
       if (res.ok) {
-        res.json().then(d=>{
+        res.json().then(d => {
           localStorage.token = d.token;
-          localStorage.userID=d.id;
-          localStorage.username=d.username;
+          localStorage.userID = d.id;
+          localStorage.username = d.username;
           localStorage.isAuthenticated = true;
-          
+
           //Obratiti paznju na ovaj if
-            if(localStorage.getItem("redirect"))
-              window.location.href=localStorage.getItem("redirect"); 
-            else
-              window.location.href="/";
-        })    
+          if (localStorage.getItem("redirect"))
+            window.location.href = localStorage.getItem("redirect");
+          else
+            window.location.href = "/";
+        })
+      } else if (res.status === 405) {
+        alert("Username or email already exists!");
       } else {
         this.setState({
           errors: { message: res.message }
         });
       }
-      })
+    })
       .catch(err => {
         console.log("Sign up data submit error: ", err);
-    });  
+      });
   }
 
   validateForm(event) {

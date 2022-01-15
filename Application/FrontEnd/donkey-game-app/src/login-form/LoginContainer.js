@@ -68,36 +68,37 @@ export default class LoginContainer extends Component {
   //       }  
   //   }    
   // }
-  
+
   async submitLogin(user) {
     //localStorage.setItem("allMaps", JSON.stringify([]));
-    await this.handleGetMaps();
-    await fetch("https://localhost:44348/api/User/LogIn", { method: "POST",
-        headers: {
+    //await this.handleGetMaps();
+    await fetch("https://localhost:44396/User/LogIn", {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ "username": user.usr, "password": user.pw })
+      },
+      body: JSON.stringify({ "userName": user.usr, "password": user.pw, email: "", token: "" })
     }).then(res => {
-        if (res.ok) {
-          res.json().then(d=> {
-            localStorage.token = d.token;
-            localStorage.userID=d.id;
-            localStorage.username=d.username;
-            localStorage.isAuthenticated = true;
-            if(localStorage.getItem("redirect"))
-               window.location.href=localStorage.getItem("redirect"); 
-             else
-              window.location.href ="/gamePage";
-          })    
-        } else {
-          this.setState({
-            errors: { message: res.message }
-          });
-        }
-      })
+      if (res.ok) {
+        res.json().then(d => {
+          localStorage.token = d.token;
+          localStorage.userID = d.id;
+          localStorage.username = d.username;
+          localStorage.isAuthenticated = true;
+          if (localStorage.getItem("redirect"))
+            window.location.href = localStorage.getItem("redirect");
+          else
+            window.location.href = "/gamePage";
+        })
+      } else {
+        this.setState({
+          errors: { message: res.message }
+        });
+      }
+    })
       .catch(err => {
         console.log("Log in data submit error: ", err);
-    });  
+      });
   }
 
   validateForm(event) {

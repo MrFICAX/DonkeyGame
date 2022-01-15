@@ -35,6 +35,11 @@ namespace Services.Services
 
         public async Task<User> CreateUser(User user)
         {
+            var Resultuser = this._users.SingleOrDefault(x => x.Email == user.Email && x.UserName == user.UserName);
+            // return null if user not found
+            if (Resultuser != null)
+                return null;
+
             user.Token = this.GenerateToken(user);
             //User tmp = new User(user.UserName, user.Password, user.Email);
             this.unitOfWork.UserRepository.Add(user);

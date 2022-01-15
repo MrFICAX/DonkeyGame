@@ -38,6 +38,8 @@ namespace DonkeyGameBackEnd.Controllers
         {
             User tmp = user;
             var result = await this.userService.CreateUser(tmp);
+            if (result == null)
+                return StatusCode(405);
             return Ok(result);
         }
 
@@ -52,9 +54,9 @@ namespace DonkeyGameBackEnd.Controllers
 
             return Ok(user);
 
-            User tmp = user;
-            var result = this.userService.LogIn(tmp);
-            return Ok(result);
+            //User tmp = user;
+            //var result = this.userService.LogIn(tmp);
+            //return Ok(result);
         }
 
         // POST api/<UserController>
