@@ -22,7 +22,7 @@ namespace Services.Services
 
         public Task<List<Card>> getCards()
         {
-           return this.unitOfWork.CardRepository.GetAll();
+            return Task.Run(() => this.unitOfWork.CardRepository.GetAll());
         }
     }
 }

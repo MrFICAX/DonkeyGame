@@ -25,7 +25,7 @@ namespace Repository.Repositories
             return true;
         }
 
-        public override Task<List<ChatMessage>> GetAll()
+        public override List<ChatMessage> GetAll()
         {
             return base.GetAll();
         }

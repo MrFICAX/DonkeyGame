@@ -7,6 +7,8 @@ import React from "react";
 // import "./style/index.css";
 import Login from './Login'
 import SearchComponent from "./SearchBar";
+import GamePage from "./GamePage";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,6 +23,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/search" element={<SearchComponent />} />
+        <Route path="/gamePage" element={<GamePage />} />
       </Routes>
     </Router>
   );

@@ -26,7 +26,7 @@ namespace Repository.Repositories
             return true;
         }
 
-        public override Task<List<Card>> GetAll()
+        public override List<Card> GetAll()
         {
             return base.GetAll();
         }

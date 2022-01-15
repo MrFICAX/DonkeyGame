@@ -31,9 +31,9 @@ namespace Repository
             return true;
         }
 
-        public virtual Task<List<T>> GetAll()
+        public virtual List<T> GetAll()
         {
-            return this._dbSet.ToListAsync<T>();
+            return this._dbSet.ToList();
         }
 
         public virtual IEnumerable<T> GetIncludes(params System.Linq.Expressions.Expression<Func<T, object>>[] includes)

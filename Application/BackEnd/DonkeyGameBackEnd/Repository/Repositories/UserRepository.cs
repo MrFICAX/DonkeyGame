@@ -11,8 +11,10 @@ namespace Repository.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
+        public DonkeyGameContext _context;
         public UserRepository(DonkeyGameContext context) : base(context)
         {
+            _context = context;
         }
         public override bool Add(User entity)
         {
@@ -24,14 +26,17 @@ namespace Repository.Repositories
             return true;
         }
 
-        public override Task<List<User>> GetAll()
+        public override List<User> GetAll()
         {
             return base.GetAll();
         }
 
         public override Task<User> GetOne(int id)
         {
-            return base.GetOne(id);
+            var user = base.GetOne(id);
+            return user;
+           //var user = this._context.Set<User>().getOne()
+           // return base.GetOne(id);
         }
     }
 }

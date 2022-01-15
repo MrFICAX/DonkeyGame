@@ -15,5 +15,7 @@ namespace Services.Interfaces
         Task<IEnumerable<User>> GetAllUsers();
         Task<User> GetUserByID(int userID);
         Task<User> GetUserByUsername(string username);
+
+        User LogIn(User user);
     }
 }

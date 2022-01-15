@@ -44,35 +44,35 @@ export default class LoginContainer extends Component {
     });
   }
 
-  async handleGetMaps(){
-    var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
-    if(existingEntries.length === 0)
-    {
-        existingEntries = [];
-        const res = await fetch("https://localhost:44348/api/Map", { method: "GET"})
-        if (res.ok) {
-          const d = await res.json()
-                d.forEach(element => {
-                    var entry = {
-                        "id": element.id,
-                        "name": element.name
-                    };
-                    localStorage.setItem("entry", JSON.stringify(entry));
-                    existingEntries.push(entry);
-                });
-                localStorage.setItem("allMaps", JSON.stringify(existingEntries));  
-        } else {
-          this.setState({
-            errors: { message: res.message }
-          });
-        }  
-    }    
-  }
+  // async handleGetMaps(){
+  //   var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
+  //   if(existingEntries.length === 0)
+  //   {
+  //       existingEntries = [];
+  //       const res = await fetch("https://localhost:44348/api/Map", { method: "GET"})
+  //       if (res.ok) {
+  //         const d = await res.json()
+  //               d.forEach(element => {
+  //                   var entry = {
+  //                       "id": element.id,
+  //                       "name": element.name
+  //                   };
+  //                   localStorage.setItem("entry", JSON.stringify(entry));
+  //                   existingEntries.push(entry);
+  //               });
+  //               localStorage.setItem("allMaps", JSON.stringify(existingEntries));  
+  //       } else {
+  //         this.setState({
+  //           errors: { message: res.message }
+  //         });
+  //       }  
+  //   }    
+  // }
   
   async submitLogin(user) {
-    localStorage.setItem("allMaps", JSON.stringify([]));
+    //localStorage.setItem("allMaps", JSON.stringify([]));
     await this.handleGetMaps();
-    await fetch("https://localhost:44348/api/User/Authenticate", { method: "POST",
+    await fetch("https://localhost:44348/api/User/LogIn", { method: "POST",
         headers: {
         "Content-Type": "application/json"
         },
@@ -87,7 +87,7 @@ export default class LoginContainer extends Component {
             if(localStorage.getItem("redirect"))
                window.location.href=localStorage.getItem("redirect"); 
              else
-               window.location.href="/home";
+              window.location.href ="/gamePage";
           })    
         } else {
           this.setState({

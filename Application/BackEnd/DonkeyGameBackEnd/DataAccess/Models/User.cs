@@ -24,5 +24,11 @@ namespace DataAccess.Models
             this.Password = password;
             this.Email = email;
         }
+
+        public User WithoutPassword()
+        {
+            this.Password = "";
+            return this;
+        }
     }
 }

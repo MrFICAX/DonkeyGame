@@ -25,7 +25,7 @@ namespace Repository.Repositories
             return true;
         }
 
-        public override Task<List<Game>> GetAll()
+        public override List<Game> GetAll()
         {
             return base.GetAll();
         }

@@ -32,12 +32,28 @@ namespace DonkeyGameBackEnd.Controllers
             return "value";
         }
 
-        [Route("CreateUser")]
+        [Route("SignUp")]
         [HttpPost]
-        public async Task<ActionResult> CreateUser([FromBody] User user)
+        public async Task<ActionResult> SignUpUser([FromBody] User user)
         {
             User tmp = user;
             var result = await this.userService.CreateUser(tmp);
+            return Ok(result);
+        }
+
+        [Route("LogIn")]
+        [HttpPost]
+        public async Task<ActionResult> LogInUser([FromBody] User user)
+        {
+            var resultUser = userService.LogIn(user);
+
+            if (user == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(user);
+
+            User tmp = user;
+            var result = this.userService.LogIn(tmp);
             return Ok(result);
         }
 
