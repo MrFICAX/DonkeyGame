@@ -25,26 +25,22 @@ const LoginForm = ({
           name="username"
           label="UserName"
           className="textfield"
-          floatingLabelText="Username"
           value={user.username}
           onChange={onChange}
-          errorText={errors.username}
         />
         <TextField
           type={type}
           name="password"
           label="Password"
           className = "textfield"
-          floatingLabelText="Password"
           value={user.password}
           onChange={onPwChange}
-          errorText={errors.password}
         />
         <br />
         <br />
         <Button variant = "contained"
           className="loginSubmit"
-          primary={true}
+          primary={true.toString()}
           type="submit"
           label="submit"
         >LOG IN

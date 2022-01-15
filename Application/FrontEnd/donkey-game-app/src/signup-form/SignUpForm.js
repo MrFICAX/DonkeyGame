@@ -30,28 +30,22 @@ const SignUpForm = ({
       <form onSubmit={onSubmit}>
         <TextField className="textfield"
           name="username"
-          floatingLabelText="Username"
           label="UserName"
           value={user.username}
           onChange={onChange}
-          errorText={errors.username}
         />
         <TextField className="textfield"
           name="email"
-          floatingLabelText="Email"
           label="Email"
           value={user.email}
           onChange={onChange}
-          errorText={errors.email}
         />
         <TextField className="textfield"
           type={type}
           name="password"
           label="Password"
-          floatingLabelText="Password"
           value={user.password}
           onChange={onPwChange}
-          errorText={errors.password}
         />
 
         <div className="pwStrRow">
@@ -70,15 +64,13 @@ const SignUpForm = ({
           type={type}
           name="pwconfirm"
           label="Confirm Password"
-          floatingLabelText="Confirm password"
           value={user.pwconfirm}
           onChange={onChange}
-          errorText={errors.pwconfirm}
         />
         <br />
         <Button color="primary" variant="contained"
           className="signUpSubmit"
-          primary={true}
+          primary={true.toString()}
           type="submit"
           label="submit"
         >SIGN UP</Button>

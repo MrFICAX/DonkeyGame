@@ -63,39 +63,39 @@ export default class SignUpContainer extends Component {
     }
   }
 
-  async handleGetMaps(){
-    var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
-    if(existingEntries.length === 0)
-    {
-        existingEntries = [];
-        const res = await fetch("https://localhost:44348/api/Map", { method: "GET"})
-        if (res.ok) {
-          const d = await res.json()
-                d.forEach(element => {
-                    var entry = {
-                        "id": element.id,
-                        "name": element.name
-                    };
-                    localStorage.setItem("entry", JSON.stringify(entry));
-                    existingEntries.push(entry);
-                });
-                localStorage.setItem("allMaps", JSON.stringify(existingEntries));  
-        } else {
-          this.setState({
-            errors: { message: res.message }
-          });
-        }  
-    }    
-  }
+  // async handleGetMaps(){
+  //   var existingEntries = JSON.parse(localStorage.getItem("allMaps"));
+  //   if(existingEntries.length === 0)
+  //   {
+  //       existingEntries = [];
+  //       const res = await fetch("https://localhost:44348/api/Map", { method: "GET"})
+  //       if (res.ok) {
+  //         const d = await res.json()
+  //               d.forEach(element => {
+  //                   var entry = {
+  //                       "id": element.id,
+  //                       "name": element.name
+  //                   };
+  //                   localStorage.setItem("entry", JSON.stringify(entry));
+  //                   existingEntries.push(entry);
+  //               });
+  //               localStorage.setItem("allMaps", JSON.stringify(existingEntries));  
+  //       } else {
+  //         this.setState({
+  //           errors: { message: res.message }
+  //         });
+  //       }  
+  //   }    
+  // }
   
   async submitSignup(user) {
-    localStorage.setItem("allMaps", JSON.stringify([]));
-    await this.handleGetMaps();
+    //localStorage.setItem("allMaps", JSON.stringify([]));
+    //await this.handleGetMaps();
     await fetch("https://localhost:44348/api/User/Signup", { method: "POST",
         headers: {
         "Content-Type": "application/json"
         },
-        body: JSON.stringify({ "username": user.usr, "password": user.pw, "email": user.email, "role": "User" })
+        body: JSON.stringify({ "username": user.usr, "password": user.pw, "email": user.email })
     }).then(res => {
       if (res.ok) {
         res.json().then(d=>{
@@ -103,6 +103,8 @@ export default class SignUpContainer extends Component {
           localStorage.userID=d.id;
           localStorage.username=d.username;
           localStorage.isAuthenticated = true;
+          
+          //Obratiti paznju na ovaj if
             if(localStorage.getItem("redirect"))
               window.location.href=localStorage.getItem("redirect"); 
             else
