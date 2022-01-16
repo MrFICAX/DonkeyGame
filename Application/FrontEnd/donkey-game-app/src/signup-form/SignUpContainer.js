@@ -91,7 +91,7 @@ export default class SignUpContainer extends Component {
   async submitSignup(user) {
     //localStorage.setItem("allMaps", JSON.stringify([]));
     //await this.handleGetMaps();
-    await fetch("https://localhost:44396/User/SignUp", {
+    await fetch("https://localhost:7225/User/SignUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,15 +113,18 @@ export default class SignUpContainer extends Component {
             window.location.href = "/";
         })
       } else if (res.status === 405) {
-        alert("Username or email already exists!");
+        this.setState({
+          errors: { message: "Username or email already exists!" },
+          user: { username: "", email: "", password: "", pwconfirm: ""}
+        });
       } else {
         this.setState({
-          errors: { message: res.message }
+          errors: { message: "Error!" }
         });
       }
     })
       .catch(err => {
-        console.log("Sign up data submit error: ", err);
+        alert("Sign up data submit error: ", err);
       });
   }
 

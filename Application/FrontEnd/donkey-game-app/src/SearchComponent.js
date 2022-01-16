@@ -1,3 +1,4 @@
+import { TextField } from '@material-ui/core';
 import React from 'react';
 
 class ProductCategoryRow extends React.Component {
@@ -13,7 +14,7 @@ class ProductCategoryRow extends React.Component {
     }
 }
 
-class ProductRow extends React.Component {
+class GameRow extends React.Component {
     render() {
         const product = this.props.product;
         const name = product.stocked ?
@@ -43,6 +44,7 @@ class ProductTable extends React.Component {
             if (product.name.indexOf(filterText) === -1) {
                 return;
             }
+            //Ova dva If-a treba izbaciti
             if (inStockOnly && !product.stocked) {
                 return;
             }
@@ -54,7 +56,7 @@ class ProductTable extends React.Component {
                 );
             }
             rows.push(
-                <ProductRow
+                <GameRow
                     product={product}
                     key={product.name}
                 />
@@ -63,15 +65,17 @@ class ProductTable extends React.Component {
         });
 
         return (
-            <table>
+            <div className='tabela'>
+            <table className='DivSveTabele' width="300" border="1" cellspacing="2" cellpadding="2">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Price</th>
+                        <th>GameOwner</th>
+                        <th>GameCode</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>
             </table>
+            </div>
         );
     }
 }
@@ -94,13 +98,13 @@ class SearchBar extends React.Component {
     render() {
         return (
             <form>
-                <input
+                <TextField className="inputLogin"
                     type="text"
                     placeholder="Search..."
                     value={this.props.filterText}
                     onChange={this.handleFilterTextChange}
                 />
-                <p>
+                <h4>
                     <input
                         type="checkbox"
                         checked={this.props.inStockOnly}
@@ -108,7 +112,7 @@ class SearchBar extends React.Component {
                     />
                     {' '}
                     Only show products in stock
-                </p>
+                </h4>
             </form>
         );
     }
@@ -160,7 +164,10 @@ class FilterableProductTable extends React.Component {
 export default class SearchComponent extends React.Component {
     render() {
         return (
+            <div className='searchGame'>
+            <h1>SEARCH ONLINE GAMES</h1>
             <FilterableProductTable products={PRODUCTS}  />
+            </div>
         )
     }
 }
