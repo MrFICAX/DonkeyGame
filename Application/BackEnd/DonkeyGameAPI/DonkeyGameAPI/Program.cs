@@ -1,3 +1,4 @@
+using DonkeyGameAPI.Hubs;
 using DonkeyGameAPI.IRepositories;
 using DonkeyGameAPI.IServices;
 using DonkeyGameAPI.Models;
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPlayerStateService, PlayerStateService>();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,5 +67,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<GameHub>("/chathub");
+});
 
 app.Run();

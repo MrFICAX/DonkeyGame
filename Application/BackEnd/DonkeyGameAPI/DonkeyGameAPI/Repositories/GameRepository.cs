@@ -1,5 +1,6 @@
 ﻿using DonkeyGameAPI.IRepositories;
 using DonkeyGameAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace DonkeyGameAPI.Repositories
 
         public override Task<Game> GetOne(int id)
         {
-            return base.GetOne(id);
+            return base.GetOne(id);          
         }
 
         public override bool Update(Game entity)

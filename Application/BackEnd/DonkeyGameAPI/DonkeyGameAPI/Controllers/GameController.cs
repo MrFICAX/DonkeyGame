@@ -52,5 +52,31 @@ namespace DonkeyGameAPI.Controllers
 
         }
 
+        [Route("RemovePlayer/{gameID}/{userID}")]
+        [HttpPut]
+        public async Task<ActionResult> RemovePlayer(int gameID, int userID)
+        {
+            var Game = await gameService.RemovePlayer(gameID, userID);
+
+            if (Game == null)
+                return BadRequest("Didn't remove"); //ERROR
+            
+            return Ok(Game);
+
+        }
+
+        [Route("RemoveGame/{gameID}")]
+        [HttpDelete]
+        public async Task<ActionResult> RemoveGame(int gameID)
+        {
+            var success = await gameService.RemoveGame(gameID);
+
+            if (!success)
+                return BadRequest("Didn't remove"); //ERROR
+
+            return Ok();
+        }
+
+
     }
 }
