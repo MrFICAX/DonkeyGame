@@ -12,7 +12,7 @@ namespace DonkeyGameAPI.Models
 
         public int GameOwnerID { get; set; }
 
-        public virtual List<PlayerState> Players { get; set; }
+        public List<PlayerState> Players { get; set; }
 
         public int? PlayerOnTheMoveID { get; set; }
 

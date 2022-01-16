@@ -1,4 +1,5 @@
-﻿using DonkeyGameAPI.IServices;
+﻿using DonkeyGameAPI.Hubs;
+using DonkeyGameAPI.IServices;
 using DonkeyGameAPI.Models;
 using DonkeyGameAPI.UOfW;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +59,7 @@ namespace DonkeyGameAPI.Services
 
             game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
             this.unitOfWork.GameRepository.Update(game);
-            await this.unitOfWork.CompleteAsync();
+            await this.unitOfWork.CompleteAsync();            
             return game;                                 
         }
 

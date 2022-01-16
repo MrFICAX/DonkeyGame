@@ -1,6 +1,8 @@
-﻿using DonkeyGameAPI.IServices;
+﻿using DonkeyGameAPI.Hubs;
+using DonkeyGameAPI.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DonkeyGameAPI.Controllers
 {
@@ -8,11 +10,12 @@ namespace DonkeyGameAPI.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        private IGameService gameService;
-
-        public GameController(IGameService gameService)
+        private readonly IGameService gameService;
+        private readonly IHubContext<GameHub> hubContext;
+        public GameController(IGameService gameService, IHubContext<GameHub> hubContext)
         {
             this.gameService = gameService;
+            this.hubContext = hubContext;
         }
 
         [Route("GetAllGamesNotStarted")]
@@ -48,6 +51,7 @@ namespace DonkeyGameAPI.Controllers
             if (Game == null)
                 return BadRequest("Cannot join game"); //ERROR
 
+            await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
             return Ok(Game);
 
         }
@@ -60,7 +64,8 @@ namespace DonkeyGameAPI.Controllers
 
             if (Game == null)
                 return BadRequest("Didn't remove"); //ERROR
-            
+
+            await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
             return Ok(Game);
 
         }
