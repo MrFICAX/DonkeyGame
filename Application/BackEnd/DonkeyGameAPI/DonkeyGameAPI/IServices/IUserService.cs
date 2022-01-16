@@ -16,6 +16,6 @@ namespace DonkeyGameAPI.IServices
         Task<User> GetUserByID(int userID);
         Task<User> GetUserByUsername(string username);
 
-        User LogIn(User user);
+        Task<User> LogIn(User user);
     }
 }

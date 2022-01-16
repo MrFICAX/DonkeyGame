@@ -32,7 +32,7 @@ namespace DonkeyGameAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> LogIn([FromBody] User user)
         {
-            var resultUser =  this.userService.LogIn(user);
+            var resultUser =  await this.userService.LogIn(user);
 
             if (resultUser == null)
                 return BadRequest(new { message = "Username or password is incorrect" });

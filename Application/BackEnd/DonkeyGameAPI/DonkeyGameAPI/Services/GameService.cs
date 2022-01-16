@@ -27,9 +27,25 @@ namespace DonkeyGameAPI.Services
 
         public async Task<Game> StartGame(int gameID)
         {
-            var game = await unitOfWork.GameRepository.GetOne(gameID);
+            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;
+            int num = Random.Shared.Next(0, 3);
+            foreach( PlayerState player in game.Players)
+            {
+                player.Cards = new List<Card>();
+                List<Card> hand = new();
+                List<Card> delt = new();
+                for(int i = 0; i < 4; i++)
+                {                   
+                    Card card = Card.Deal();
+                    while (delt.Contains(card)) card = Card.Deal(); 
+                    hand.Add(card);
+                    delt.Add(card);
+                }
+                player.Cards.AddRange(hand);
+                if(game.Players.IndexOf(player) % 4 == num) hand.Add(Card.SpecialCard());
+            }
             unitOfWork.GameRepository.Update(game);
             await unitOfWork.CompleteAsync();
             return game;
@@ -60,7 +76,7 @@ namespace DonkeyGameAPI.Services
 
         public async Task<Game?> JoinGame(int gameID, int userID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).FirstOrDefault(g => g.Id == gameID);
+            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
             
             User whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);
 
@@ -76,7 +92,7 @@ namespace DonkeyGameAPI.Services
 
         public async Task<Game> RemovePlayer(int gameID, int userID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).FirstOrDefault(g => g.Id == gameID);
+            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
 
             if (game != null)
             {
@@ -91,13 +107,16 @@ namespace DonkeyGameAPI.Services
 
         public async Task<bool> RemoveGame(int gameID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).FirstOrDefault(g => g.Id == gameID);
+            var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.Id == gameID);
             if (game != null)
             {
                 foreach (var player in game.Players)
                 {
-                    unitOfWork.PlayerStateRepository.Delete(player);
-                    await unitOfWork.CompleteAsync();
+                    foreach(var card in player.Cards)
+                    {
+                        unitOfWork.CardRepository.Delete(card);
+                    }
+                    unitOfWork.PlayerStateRepository.Delete(player);                    
                 }
                 unitOfWork.GameRepository.Delete(game);
                 await unitOfWork.CompleteAsync();

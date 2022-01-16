@@ -47,6 +47,14 @@ namespace DonkeyGameAPI.Repositories
             return query.ToList();
         }
 
+        public virtual IEnumerable<T> GetInclude(string navigationPropertyPath)
+        {
+            IQueryable<T> query = _dbSet.Include(navigationPropertyPath);            
+            return query.ToList();
+        }
+
+
+
         public virtual async Task<T> GetOne(int id)
         {
             return await _dbSet.FindAsync(id);

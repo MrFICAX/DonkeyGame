@@ -4,6 +4,7 @@ using DonkeyGameAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DonkeyGameAPI.Migrations
 {
     [DbContext(typeof(DonkeyGameContext))]
-    partial class DonkeyGameContextModelSnapshot : ModelSnapshot
+    [Migration("20220116113902_CardModified")]
+    partial class CardModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

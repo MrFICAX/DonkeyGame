@@ -18,8 +18,7 @@ namespace DonkeyGameAPI.Services
         #region HelpAttributes
         private const string alphaUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string alphaLowercase = "abcdefghijklmnopqrstuvwxyz";
-        private Random random;
-        private List<User> _users;
+        private Random random;        
         #endregion
 
         private readonly IUnitOfWork unitOfWork;
@@ -28,13 +27,11 @@ namespace DonkeyGameAPI.Services
         {
             this.unitOfWork = new UnitOfWork(donkeyGameContext);
             this.random = new Random();
-            _users = this.unitOfWork.UserRepository.GetAllList();
-
         }
 
         public async Task<User> CreateUser(User user)
         {
-            var Resultuser = this._users.SingleOrDefault(x => x.Email == user.Email && x.UserName == user.UserName);
+            var Resultuser = unitOfWork.UserRepository.GetAllList().SingleOrDefault(x => x.Email == user.Email && x.UserName == user.UserName);
             // return null if user not found
             if (Resultuser != null)
                 return null;
@@ -67,16 +64,13 @@ namespace DonkeyGameAPI.Services
             throw new NotImplementedException();
         }
 
-        public User LogIn(User user)
+        public async Task<User> LogIn(User user)
         {
 
-            var Resultuser = this._users.SingleOrDefault(x => x.UserName == user.UserName && x.Password == user.Password);
+            var Resultuser = unitOfWork.UserRepository.GetAllList().SingleOrDefault(x => x.UserName == user.UserName && x.Password == user.Password);
             // return null if user not found
             if (Resultuser == null)
-                return Resultuser;
-
-
-
+                return null;
 
             //// authentication successful so generate jwt token
             //var tokenHandler = new JwtSecurityTokenHandler();
@@ -94,7 +88,8 @@ namespace DonkeyGameAPI.Services
             //var token = tokenHandler.CreateToken(tokenDescriptor);
             //user.Token = tokenHandler.WriteToken(token);
             Resultuser.Token = this.GenerateToken(Resultuser);
-            return Resultuser.WithoutPassword();
+            Resultuser.WithoutPassword();
+            return Resultuser;
         }
 
         private string GenerateToken(User user)
@@ -107,9 +102,9 @@ namespace DonkeyGameAPI.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-            new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.UserName.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Password.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.UserName.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Password.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256Signature)

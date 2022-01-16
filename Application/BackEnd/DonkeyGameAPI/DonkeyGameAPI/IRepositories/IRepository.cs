@@ -14,6 +14,6 @@ namespace DonkeyGameAPI.IRepositories
         bool Update(T obj);
         Task<IEnumerable<T>> GetAll();
         IEnumerable<T> GetIncludes(params Expression<Func<T, object>>[] includes);
-
+        IEnumerable<T> GetInclude(string navigationPropertyPath);
     }
 }
