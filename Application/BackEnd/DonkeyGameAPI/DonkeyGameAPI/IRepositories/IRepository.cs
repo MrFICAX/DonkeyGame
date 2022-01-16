@@ -8,8 +8,8 @@ namespace DonkeyGameAPI.IRepositories
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetOne(int id);
-        bool Add(T obj);
+        Task<T?> GetOne(int id);
+        Task<bool> Add(T obj);
         bool Delete(T obj);
         bool Update(T obj);
         Task<IEnumerable<T>> GetAll();

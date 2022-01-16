@@ -13,7 +13,7 @@ namespace DonkeyGameAPI.Repositories
         public PlayerStateRepository(DonkeyGameContext context) : base(context)
         {
         }
-        public override bool Add(PlayerState entity)
+        public override Task<bool> Add(PlayerState entity)
         {
             return base.Add(entity);
         }
@@ -28,7 +28,7 @@ namespace DonkeyGameAPI.Repositories
             return base.GetAll();
         }
 
-        public override Task<PlayerState> GetOne(int id)
+        public override Task<PlayerState?> GetOne(int id)
         {
             return base.GetOne(id);
         }

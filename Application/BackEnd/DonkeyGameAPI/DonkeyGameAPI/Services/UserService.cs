@@ -29,14 +29,13 @@ namespace DonkeyGameAPI.Services
             this.random = new Random();
         }
 
-        public async Task<User> CreateUser(User user)
+        public async Task<User?> CreateUser(User user)
         {
             var Resultuser = unitOfWork.UserRepository.GetAllList().SingleOrDefault(x => x.Email == user.Email && x.UserName == user.UserName);
             // return null if user not found
-            if (Resultuser != null)
-                return null;
+            if (Resultuser != null) return null;                
 
-            user.Token = this.GenerateToken(user);
+            user.Token = UserService.GenerateToken(user);
             //User tmp = new User(user.UserName, user.Password, user.Email);
             this.unitOfWork.UserRepository.Add(user);
             await this.unitOfWork.CompleteAsync();
@@ -64,13 +63,13 @@ namespace DonkeyGameAPI.Services
             throw new NotImplementedException();
         }
 
-        public async Task<User> LogIn(User user)
+        public async Task<User?> LogIn(User user)
         {
 
             var Resultuser = unitOfWork.UserRepository.GetAllList().SingleOrDefault(x => x.UserName == user.UserName && x.Password == user.Password);
             // return null if user not found
-            if (Resultuser == null)
-                return null;
+            if (Resultuser == null) return null;
+                
 
             //// authentication successful so generate jwt token
             //var tokenHandler = new JwtSecurityTokenHandler();
@@ -87,12 +86,12 @@ namespace DonkeyGameAPI.Services
             //};
             //var token = tokenHandler.CreateToken(tokenDescriptor);
             //user.Token = tokenHandler.WriteToken(token);
-            Resultuser.Token = this.GenerateToken(Resultuser);
+            Resultuser.Token = UserService.GenerateToken(Resultuser);
             Resultuser.WithoutPassword();
             return Resultuser;
         }
 
-        private string GenerateToken(User user)
+        private static string GenerateToken(User user)
         {
             var mySecret = "asdv234234^&%&^%&^hjsdfb2%%%";
             var mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));

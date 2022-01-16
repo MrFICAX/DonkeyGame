@@ -20,9 +20,9 @@ namespace DonkeyGameAPI.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public virtual bool Add(T obj)
+        public async virtual Task<bool> Add(T obj)
         {
-            _dbSet.AddAsync(obj);
+            var a = await _dbSet.AddAsync(obj);
             return true;
         }
 
@@ -55,7 +55,7 @@ namespace DonkeyGameAPI.Repositories
 
 
 
-        public virtual async Task<T> GetOne(int id)
+        public virtual async Task<T?> GetOne(int id)
         {
             return await _dbSet.FindAsync(id);
         }

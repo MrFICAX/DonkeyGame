@@ -10,11 +10,11 @@ namespace DonkeyGameAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private IUserService userService { get; set; }
+        private IUserService UserService { get; set; }
 
         public UserController(IUserService userService)
         {
-            this.userService = userService;
+            UserService = userService;
         }        
 
         [Route("SignUp")]
@@ -22,7 +22,7 @@ namespace DonkeyGameAPI.Controllers
         public async Task<ActionResult> SignUpUser([FromBody] User user)
         {
             User tmp = user;
-            var result = await this.userService.CreateUser(tmp);
+            var result = await UserService.CreateUser(tmp);
             if (result == null)
                 return StatusCode(405);
             return Ok(result);
@@ -32,7 +32,7 @@ namespace DonkeyGameAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> LogIn([FromBody] User user)
         {
-            var resultUser =  await this.userService.LogIn(user);
+            var resultUser =  await UserService.LogIn(user);
 
             if (resultUser == null)
                 return BadRequest(new { message = "Username or password is incorrect" });

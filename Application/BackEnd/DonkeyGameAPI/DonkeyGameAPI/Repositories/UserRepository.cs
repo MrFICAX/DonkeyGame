@@ -15,7 +15,7 @@ namespace DonkeyGameAPI.Repositories
         {
             
         }
-        public override bool Add(User entity)
+        public override Task<bool> Add(User entity)
         {
             return base.Add(entity);
         }
@@ -35,7 +35,7 @@ namespace DonkeyGameAPI.Repositories
             return _dbSet.ToList();
         }
 
-        public override Task<User> GetOne(int id)
+        public override Task<User?> GetOne(int id)
         {
             var user = base.GetOne(id);
             return user;

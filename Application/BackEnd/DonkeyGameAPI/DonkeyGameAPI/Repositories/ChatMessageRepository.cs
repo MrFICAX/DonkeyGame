@@ -14,7 +14,7 @@ namespace DonkeyGameAPI.Repositories
         {
         }
 
-        public override bool Add(ChatMessage entity)
+        public override Task<bool> Add(ChatMessage entity)
         {
             return base.Add(entity);
         }
@@ -29,7 +29,7 @@ namespace DonkeyGameAPI.Repositories
             return base.GetAll();
         }
 
-        public override Task<ChatMessage> GetOne(int id)
+        public override Task<ChatMessage?> GetOne(int id)
         {
             return base.GetOne(id);
         }

@@ -22,34 +22,35 @@ namespace DonkeyGameAPI.Models
 
         public static Card Deal()
         {
-            string name;
-            int number = Random.Shared.Next(0,3);
-
-            switch (number)
+            int sign = Random.Shared.Next(0,4);
+            string name = sign switch
             {
-                case 0:
-                    name = "DIAMOND";
-                    break;
-                case 1:
-                    name = "SPADE";
-                    break;
-                case 2:
-                    name = "CLUB";
-                    break;
-                case 3:
-                    name = "HEART";
-                    break;
-                default:
-                    name = string.Empty;
-                    break;
-            }
-            number = number + 11;
-            return new Card(number, name);
+                0 => "DIAMOND",
+                1 => "SPADE",
+                2 => "CLUB",
+                3 => "HEART",
+                _ => string.Empty,
+            };
+            return new Card(Random.Shared.Next(11,15), name);
         }
 
         public static Card SpecialCard()
         {
             return new Card(2, "CLUB");
+        }
+
+        public Card WithoutID()
+        {
+            this.CardID = 0;
+            return this;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if(obj == null) return false;
+            Card other = (Card)obj;
+            if(this.Name == other.Name && this.Value == other.Value && this.CardID == other.CardID) return true;
+            return false;
         }
     }
 }

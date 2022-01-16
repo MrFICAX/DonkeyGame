@@ -15,7 +15,6 @@ namespace DonkeyGameAPI.Services
         #region HelpAttributes
         private const string alphaUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string alphaLowercase = "abcdefghijklmnopqrstuvwxyz";
-        private Random random;
         #endregion
 
         private readonly IUnitOfWork unitOfWork;

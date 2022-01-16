@@ -25,26 +25,32 @@ namespace DonkeyGameAPI.Services
             
         }
 
-        public async Task<Game> StartGame(int gameID)
+        public async Task<Game?> StartGame(int gameID)
         {
             var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;
             int num = Random.Shared.Next(0, 3);
+            List<Card> delt = new();
+            List<Card> hand = new();
+            Card card = new(0,"");
+            delt.Add(card);
             foreach( PlayerState player in game.Players)
             {
-                player.Cards = new List<Card>();
-                List<Card> hand = new();
-                List<Card> delt = new();
+                player.Cards = new List<Card>();              
+                                
                 for(int i = 0; i < 4; i++)
-                {                   
-                    Card card = Card.Deal();
-                    while (delt.Contains(card)) card = Card.Deal(); 
+                {
+                    do
+                    {
+                        card = Card.Deal().WithoutID();
+                    } while (delt.Contains(card) && delt.Count < 17);                     
                     hand.Add(card);
                     delt.Add(card);
                 }
-                player.Cards.AddRange(hand);
                 if(game.Players.IndexOf(player) % 4 == num) hand.Add(Card.SpecialCard());
+                player.Cards.AddRange(hand);
+                hand.Clear();
             }
             unitOfWork.GameRepository.Update(game);
             await unitOfWork.CompleteAsync();
@@ -57,18 +63,19 @@ namespace DonkeyGameAPI.Services
                 .Select(s => s[Random.Shared.Next(s.Length)]).ToArray());
         }
 
-        public async Task<Game> CreateGame(int userID)
+        public async Task<Game?> CreateGame(int userID)
         {
-            User author = await this.unitOfWork.UserRepository.GetOne(userID);
-
-            Game game = new Game();
+            var author = await this.unitOfWork.UserRepository.GetOne(userID);
+            if(author == null) return null;
+            Game game = new();
 
             game.GameOwnerID = author.UserID;
             game.GameCode = RandomString(15);
             game.IsFinished = false;
-            game.Players = new List<PlayerState>();            
-            game.Players.Add(PlayerState.FromUser(author));           
-                
+            game.Players = new List<PlayerState>
+            {
+                PlayerState.FromUser(author)
+            };
             this.unitOfWork.GameRepository.Add(game);
             await this.unitOfWork.CompleteAsync(); 
             return game;
@@ -78,30 +85,30 @@ namespace DonkeyGameAPI.Services
         {
             var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
             
-            User whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);
+            var whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);
 
-            if (game != null)
-            {
-                if (game.Players.Count > 4) return null;
-                game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
-                this.unitOfWork.GameRepository.Update(game);
-                await this.unitOfWork.CompleteAsync();
-            }       
+            if (whoWantsToJoin == null) return null;
+            if (game == null) return null;
+            if (game.Players.Count > 4) return null;
+                
+            game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
+            unitOfWork.GameRepository.Update(game);               
+            
+            await this.unitOfWork.CompleteAsync();       
             return game;                                 
         }
 
-        public async Task<Game> RemovePlayer(int gameID, int userID)
+        public async Task<Game?> RemovePlayer(int gameID, int userID)
         {
             var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
 
-            if (game != null)
-            {
-                var player = game.Players.Find(p => p.UserID == userID);
-                if(player != null) unitOfWork.PlayerStateRepository.Delete(player);                
-                if(player!=null) game.Players.Remove(player);
-                unitOfWork.GameRepository.Update(game);
-                await unitOfWork.CompleteAsync();
-            }            
+            if (game == null) return null;
+            var player = game.Players.Find(p => p.UserID == userID);
+            if(player == null) return null;
+            unitOfWork.PlayerStateRepository.Delete(player);                
+            game.Players.Remove(player);
+            unitOfWork.GameRepository.Update(game);
+            await unitOfWork.CompleteAsync();                       
             return game;
         }
 
