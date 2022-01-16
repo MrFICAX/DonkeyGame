@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DonkeyGameAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace DonkeyGameAPI.IServices
 {
     public interface IGameService
     {
+        Task<IEnumerable<Game>> GetAllGamesNotStarted();
+        Task<Game> CreateGame(int userID);
+        Task<Game> JoinGame(int gameID, int userID);
     }
 }

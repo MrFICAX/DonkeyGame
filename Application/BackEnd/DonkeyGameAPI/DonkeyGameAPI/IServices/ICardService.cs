@@ -9,6 +9,6 @@ namespace DonkeyGameAPI.IServices
 {
     public interface ICardService
     {
-        Task<List<Card>> getCards();
+        Task<IEnumerable<Card>> getCards();
     }
 }

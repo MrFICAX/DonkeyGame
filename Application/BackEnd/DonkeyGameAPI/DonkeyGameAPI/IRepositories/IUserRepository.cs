@@ -9,5 +9,6 @@ namespace DonkeyGameAPI.IRepositories
 {
     public interface IUserRepository : IRepository<User>
     {
+        List<User> GetAllList();
     }
 }

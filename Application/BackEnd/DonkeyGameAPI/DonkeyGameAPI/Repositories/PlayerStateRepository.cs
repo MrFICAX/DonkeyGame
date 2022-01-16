@@ -23,7 +23,7 @@ namespace DonkeyGameAPI.Repositories
             return true;
         }
 
-        public override List<PlayerState> GetAll()
+        public override Task<IEnumerable<PlayerState>> GetAll()
         {
             return base.GetAll();
         }

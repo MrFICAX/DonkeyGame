@@ -28,7 +28,7 @@ namespace DonkeyGameAPI.Services
         {
             this.unitOfWork = new UnitOfWork(donkeyGameContext);
             this.random = new Random();
-            _users = this.unitOfWork.UserRepository.GetAll();
+            _users = this.unitOfWork.UserRepository.GetAllList();
 
         }
 

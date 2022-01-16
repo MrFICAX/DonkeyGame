@@ -15,22 +15,7 @@ namespace DonkeyGameAPI.Controllers
         public UserController(IUserService userService)
         {
             this.userService = userService;
-        }
-
-
-        // GET: api/<UserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        }        
 
         [Route("SignUp")]
         [HttpPost]
@@ -45,36 +30,18 @@ namespace DonkeyGameAPI.Controllers
 
         [Route("LogIn")]
         [HttpPost]
-        public async Task<ActionResult> LogInUser([FromBody] User user)
+        public async Task<ActionResult> LogIn([FromBody] User user)
         {
-            var resultUser = userService.LogIn(user);
+            var resultUser =  this.userService.LogIn(user);
 
-            if (user == null)
+            if (resultUser == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            return Ok(user);
+            return Ok(resultUser);
 
             //User tmp = user;
             //var result = this.userService.LogIn(tmp);
             //return Ok(result);
-        }
-
-        // POST api/<UserController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        }         
     }
 }

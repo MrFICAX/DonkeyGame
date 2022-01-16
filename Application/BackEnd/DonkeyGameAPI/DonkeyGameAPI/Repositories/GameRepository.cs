@@ -24,7 +24,7 @@ namespace DonkeyGameAPI.Repositories
             return true;
         }
 
-        public override List<Game> GetAll()
+        public override Task<IEnumerable<Game>> GetAll()
         {
             return base.GetAll();
         }

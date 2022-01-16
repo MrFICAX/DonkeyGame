@@ -20,9 +20,15 @@ namespace DonkeyGameAPI.Services
 
         private readonly IUnitOfWork unitOfWork;
 
-        public Task<List<Card>> getCards()
+        public CardService(IUnitOfWork unitOfWork)
         {
-            return Task.Run(() => unitOfWork.CardRepository.GetAll());
+            this.unitOfWork = unitOfWork;
+        }
+
+        public async Task<IEnumerable<Card>> getCards()
+        {
+            IEnumerable<Card> cards = await this.unitOfWork.CardRepository.GetAll();
+            return cards;
         }
     }
 }

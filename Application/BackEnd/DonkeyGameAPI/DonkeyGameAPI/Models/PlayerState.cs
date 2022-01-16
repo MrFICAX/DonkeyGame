@@ -12,5 +12,16 @@ namespace DonkeyGameAPI.Models
         public int UserID { get; set; }
         public int Points { get; set; }
         public List<Card> Cards { get; set; }
+
+        public static PlayerState FromUser(User user)
+        {
+            PlayerState playerState = new()
+            {
+                UserID = user.UserID,
+                Points = 0,
+                Cards = new List<Card>()
+            };
+            return playerState;
+        }
     }
 }

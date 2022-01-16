@@ -16,14 +16,7 @@ namespace DonkeyGameAPI.Models
 
         public string Email { get; set; }
 
-        public string Token { get; set; }
-
-        public User(string userName, string password, string email)
-        {
-            UserName = userName;
-            Password = password;
-            Email = email;
-        }
+        public string Token { get; set; }        
 
         public User WithoutPassword()
         {
