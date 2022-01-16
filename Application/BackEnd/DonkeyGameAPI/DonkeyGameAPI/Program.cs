@@ -64,13 +64,17 @@ app.UseCors("CORS");
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+;
 
 app.MapControllers();
 
+app.UseRouting();
+
+app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<GameHub>("/chathub");
+    endpoints.MapHub<GameHub>("/GameHub");
 });
 
 app.Run();

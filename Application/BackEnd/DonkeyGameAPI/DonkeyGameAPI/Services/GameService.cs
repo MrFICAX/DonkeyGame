@@ -13,18 +13,27 @@ namespace DonkeyGameAPI.Services
 {
     public class GameService : IGameService
     {
-        private IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork unitOfWork;
         public GameService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Game>> GetAllGamesNotStarted()
+        public Task<IEnumerable<Game>> GetAllGamesNotStarted()
         {
-            IEnumerable<Game> games = await this.unitOfWork.GameRepository.GetAll();
-            return games;
+            return (Task<IEnumerable<Game>>)unitOfWork.GameRepository.GetIncludes().Where(g => g.DateOfStart == null);         
+            
         }
 
+        public async Task<Game> StartGame(int gameID)
+        {
+            var game = await unitOfWork.GameRepository.GetOne(gameID);
+            if (game == null) return null;
+            game.DateOfStart = DateTime.Now;
+            unitOfWork.GameRepository.Update(game);
+            await unitOfWork.CompleteAsync();
+            return game;
+        }
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -49,17 +58,19 @@ namespace DonkeyGameAPI.Services
             return game;
         }
 
-        public async Task<Game> JoinGame(int gameID, int userID)
+        public async Task<Game?> JoinGame(int gameID, int userID)
         {
             var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).FirstOrDefault(g => g.Id == gameID);
             
-            User whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);           
-            
-            if (game.Players.Count > 4) return null; 
+            User whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);
 
-            game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
-            this.unitOfWork.GameRepository.Update(game);
-            await this.unitOfWork.CompleteAsync();            
+            if (game != null)
+            {
+                if (game.Players.Count > 4) return null;
+                game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
+                this.unitOfWork.GameRepository.Update(game);
+                await this.unitOfWork.CompleteAsync();
+            }       
             return game;                                 
         }
 

@@ -67,7 +67,6 @@ namespace DonkeyGameAPI.Controllers
 
             await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
             return Ok(Game);
-
         }
 
         [Route("RemoveGame/{gameID}")]
@@ -82,6 +81,15 @@ namespace DonkeyGameAPI.Controllers
             return Ok();
         }
 
+        [Route("StartGame/{gameID}")]
+        [HttpGet]
+        public async Task<ActionResult> StartGame(int gameID)
+        {
+            var game = await gameService.StartGame(gameID);
+            if (game == null)
+                return BadRequest("Didn't start");
+            return Ok(game);
+        }
 
     }
 }
