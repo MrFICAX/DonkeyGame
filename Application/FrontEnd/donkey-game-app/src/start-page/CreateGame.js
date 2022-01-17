@@ -25,7 +25,7 @@ function CreateGame() {
                         <br /><br />
                         <p className="error"></p>
 
-                        <Button color="primary" variant="contained" id="buttonLogin" onClick={() => CreateGame()}>CREATE GAME</Button>
+                        <Button color="primary" variant="contained" id="buttonLogin" onClick={() => handleCreateGame()}>CREATE GAME</Button>
 
                     </div>
 
@@ -60,6 +60,65 @@ function CreateGame() {
             setShowSpinner(false);
         });
     }
+
+    function handleCreateGame() {
+        const usernames = [];
+
+        // players.filter(player => player.complete === true).forEach(element => {
+        //     usernames.push(element.username);
+        // });
+
+        var msg = {
+            "users": usernames,
+            "game": {
+                gameOwnerID: localStorage.userID,
+                gameCode: parseInt(localStorage.gameCode)
+            }
+        }
+
+        fetch("https://localhost:7225/Game/CreateGame" + localStorage.userID, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    localStorage.gameID = result;
+                    await sendCreateGameMessage(localStorage.lobbyID, result);
+                });
+
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
+            }
+        })
+            .catch(err => {
+                console.log("Create game error: ", err);
+            });
+    }
+
+    function sendCreateGameMessage(lobbyID, gameID) {
+        const msg = {
+            lobbyID: lobbyID,
+            gameID: gameID
+        };
+
+        if (this.connection.connectionStarted) {
+            try {
+                this.connection.send('CreateGame', msg);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+    }
+
 }
 
 export default CreateGame

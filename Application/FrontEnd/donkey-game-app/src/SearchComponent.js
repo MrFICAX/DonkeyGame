@@ -1,4 +1,4 @@
-import { TextField } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import React from 'react';
 
 class ProductCategoryRow extends React.Component {
@@ -15,6 +15,86 @@ class ProductCategoryRow extends React.Component {
 }
 
 class GameRow extends React.Component {
+    
+    constructor(props) {
+        super(props);
+
+        this.state = {
+                connection: "",
+                game: {
+                    code: "",
+                    email: "",
+                    password: "",
+                    pwconfirm: ""
+                },
+                gameSelected: {
+                    game: this.game
+                },
+                btnTxt: "show",
+                type: "password",
+                score: "0"
+        }
+        localStorage.gameID = 3 //hardkodirano za testiranje
+    };
+
+    handleJoinGame() {
+    const usernames = [];
+
+    // players.filter(player => player.complete === true).forEach(element => {
+    //     usernames.push(element.username);
+    // });
+        var msg = {
+            "users": usernames,
+            "game": {
+                gameID: localStorage.gameID,
+                gameOwnerID: localStorage.userID,
+                gameCode: parseInt(localStorage.gameCode)
+            }
+        }
+
+
+        fetch("https://localhost:7225/Game/JoinGame/" + localStorage.gameID +"/"+ localStorage.userID, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    localStorage.gameID = result;
+                    await this.sendCreateGameMessage(localStorage.lobbyID, result);
+                });
+
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
+            }
+        })
+            .catch(err => {
+                console.log("Create game error: ", err);
+            });
+    }
+
+    sendCreateGameMessage(lobbyID, gameID) {
+        const msg = {
+            lobbyID: lobbyID,
+            gameID: gameID
+        };
+
+        if (this.connection.connectionStarted) {
+            try {
+                this.connection.send('CreateGame', msg);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+    }
     render() {
         const product = this.props.product;
         const name = product.stocked ?
@@ -27,6 +107,11 @@ class GameRow extends React.Component {
             <tr>
                 <td>{name}</td>
                 <td>{product.price}</td>
+                <td>
+                    <Button color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleJoinGame()}>JOIN GAME</Button>
+
+
+                </td>
             </tr>
         );
     }
@@ -66,7 +151,7 @@ class ProductTable extends React.Component {
 
         return (
             <div className='tabela'>
-            <table className='DivSveTabele' width="300" border="1" cellspacing="2" cellpadding="2">
+            <table className='DivSveTabele' width="300" border="1" cellSpacing="2" cellPadding="2">
                 <thead>
                     <tr>
                         <th>GameOwner</th>

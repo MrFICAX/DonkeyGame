@@ -18,6 +18,9 @@ export default class StartPageContainer extends Component {
                 password: "",
                 pwconfirm: ""
             },
+            gameSelected: {
+                game: this.game
+            },
             btnTxt: "show",
             type: "password",
             score: "0"
@@ -39,7 +42,7 @@ export default class StartPageContainer extends Component {
     }
 
     getGames() {
-        fetch("https://localhost:7225/Game/GetGames", {
+        fetch("https://localhost:7225/Game/GetAllGamesNotStarted", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -62,12 +65,14 @@ export default class StartPageContainer extends Component {
     }
 
     AccessGame() {
-        fetch("https://localhost:7225/Game/AccessGame", {
+
+        //gameSelected
+
+        fetch("https://localhost:7225/Game/JoinGame/" + this.gameSelected.gameID + "/" + localStorage.userID, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: { gameID: ""}
+            }
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
@@ -84,61 +89,60 @@ export default class StartPageContainer extends Component {
                 console.log("Create game error: ", err);
             });
     }
-    handleCreateGame() {
-        const usernames = [];
+    // handleCreateGame() {
+    //     const usernames = [];
 
-        // players.filter(player => player.complete === true).forEach(element => {
-        //     usernames.push(element.username);
-        // });
+    //     // players.filter(player => player.complete === true).forEach(element => {
+    //     //     usernames.push(element.username);
+    //     // });
 
-        var msg = {
-            "users": usernames,
-            "mapID": parseInt(localStorage.mapID)
-        }
+    //     var msg = {
+    //         "users": usernames,
+    //         "mapID": parseInt(localStorage.mapID)
+    //     }
 
-        fetch("https://localhost:7225/Game/CreateGame", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(msg)
-        }).then(res => {
-            if (res.ok) {
-                res.json().then(async result => {
-                    localStorage.gameID = result;
-                    await this.sendCreateGameMessage(localStorage.lobbyID, result);
-                });
+    //     fetch("https://localhost:7225/Game/CreateGame"+ localStorage.userID, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(msg)
+    //     }).then(res => {
+    //         if (res.ok) {
+    //             res.json().then(async result => {
+    //                 localStorage.gameID = result;
+    //                 await this.sendCreateGameMessage(localStorage.lobbyID, result);
+    //             });
 
-            } else {
-                this.setState({
-                    errors: { message: res.message }
-                });
-            }
-        })
-            .catch(err => {
-                console.log("Create game error: ", err);
-            });
-    }
+    //         } else {
+    //             this.setState({
+    //                 errors: { message: res.message }
+    //             });
+    //         }
+    //     })
+    //         .catch(err => {
+    //             console.log("Create game error: ", err);
+    //         });
+    // }
 
-    sendCreateGameMessage(lobbyID, gameID) {
-        const msg = {
-            lobbyID: lobbyID,
-            gameID: gameID,
-            mapID: parseInt(localStorage.mapID)
-        };
+    // sendCreateGameMessage(lobbyID, gameID) {
+    //     const msg = {
+    //         lobbyID: lobbyID,
+    //         gameID: gameID
+    //     };
 
-        if (this.connection.connectionStarted) {
-            try {
-                this.connection.send('CreateGame', msg);
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }
-        else {
-            alert('No connection to server yet.');
-        }
-    }
+    //     if (this.connection.connectionStarted) {
+    //         try {
+    //             this.connection.send('CreateGame', msg);
+    //         }
+    //         catch (e) {
+    //             console.log(e);
+    //         }
+    //     }
+    //     else {
+    //         alert('No connection to server yet.');
+    //     }
+    // }
 
     handleLogOut() {
         // if (connection.connectionStarted) {
@@ -174,7 +178,7 @@ export default class StartPageContainer extends Component {
                 <div className="lobbyDiv">
                     <SearchComponent maps={localStorage.getItem("allMaps")} />
                     <GameList games={localStorage.getItem("games")} />
-                        {/* <div className="playersDiv">
+                    {/* <div className="playersDiv">
                                 <label>Players:</label>
                                 <div>
                                     <PlayerList players={players} togglePlayer={togglePlayer} />
@@ -185,7 +189,7 @@ export default class StartPageContainer extends Component {
                                 </div>
                             </div> */}
                     <div className="createGame">
-                        <CreateGame></CreateGame>
+                        <CreateGame handleCreateGame={this.handleCreateGame}></CreateGame>
                         {/* <form>
                             <TextField className="textfield"
                                 type="input"

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+	<LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
