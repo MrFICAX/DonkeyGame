@@ -76,7 +76,7 @@ namespace DonkeyGameAPI.Services
             {
                 PlayerState.FromUser(author)
             };
-            this.unitOfWork.GameRepository.Add(game);
+            await unitOfWork.GameRepository.Add(game);
             await this.unitOfWork.CompleteAsync(); 
             return game;
         }
@@ -131,5 +131,21 @@ namespace DonkeyGameAPI.Services
             }
             return false;
         }
+        
+        public async Task<Game?> PassACard(int gameID, int playerfromID, int playertoID, int cardID)
+        {/*
+            var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.Id == gameID);
+            if (game == null) return null;
+            var playerFrom = await unitOfWork.PlayerStateRepository.GetOne(playerfromID);
+            var playerTo = await unitOfWork.PlayerStateRepository.GetOne(playertoID);
+            var cardToPass = await unitOfWork.CardRepository.GetOne(cardID);
+            if (playerFrom == null && playerTo == null) return null;
+            
+            playerTo.Cards.Add(cardToPass);
+            playerFrom.Cards.Remove(cardToPass);
+            unitOfWork.CompleteAsync();
+                       */
+            return null;
+        }     
     }
 }

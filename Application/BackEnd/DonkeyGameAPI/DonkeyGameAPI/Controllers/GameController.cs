@@ -91,5 +91,15 @@ namespace DonkeyGameAPI.Controllers
             return Ok(game);
         }
 
+        [Route("PassACard/{gameID}/{playerfromID}/{playertoID}/{cardID}")]
+        [HttpGet]
+        public async Task<ActionResult> PassACard(int gameID, int playerfromID, int playertoID, int cardID)
+        {
+            var game = await gameService.PassACard(gameID, playerfromID, playertoID, cardID);
+            if (game == null)
+                return BadRequest("Didn't pass a card");
+            return Ok(game);
+        }
+
     }
 }
