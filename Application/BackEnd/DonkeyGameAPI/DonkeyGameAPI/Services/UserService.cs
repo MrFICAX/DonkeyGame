@@ -31,7 +31,7 @@ namespace DonkeyGameAPI.Services
 
         public async Task<User?> CreateUser(User user)
         {
-            var Resultuser = unitOfWork.UserRepository.GetAllList().SingleOrDefault(x => x.Email == user.Email && x.UserName == user.UserName);
+            var Resultuser = unitOfWork.UserRepository.GetAllList().FirstOrDefault(x => x.UserName == user.UserName || x.Email == user.Email);
             // return null if user not found
             if (Resultuser != null) return null;                
 
