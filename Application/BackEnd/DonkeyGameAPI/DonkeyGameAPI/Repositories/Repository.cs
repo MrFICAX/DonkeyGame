@@ -32,9 +32,9 @@ namespace DonkeyGameAPI.Repositories
             return true;
         }
 
-        public virtual async Task<IEnumerable<T>> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            return  _dbSet.ToList();
         }
 
         public virtual IEnumerable<T> GetIncludes(params System.Linq.Expressions.Expression<Func<T, object>>[] includes)

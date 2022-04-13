@@ -24,7 +24,7 @@ namespace DonkeyGameAPI.Repositories
             return true;
         }
 
-        public override Task<IEnumerable<ChatMessage>> GetAll()
+        public override IEnumerable<ChatMessage> GetAll()
         {
             return base.GetAll();
         }

@@ -26,8 +26,9 @@ namespace DonkeyGameAPI.Services
 
         public async Task<IEnumerable<Card>> getCards()
         {
-            IEnumerable<Card> cards = await this.unitOfWork.CardRepository.GetAll();
-            return cards;
+            //IEnumerable<Card> cards = await this.unitOfWork.CardRepository.GetAll();
+            //return cards;
+            return null;
         }
     }
 }

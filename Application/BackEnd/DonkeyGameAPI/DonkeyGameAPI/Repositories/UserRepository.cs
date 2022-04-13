@@ -25,7 +25,7 @@ namespace DonkeyGameAPI.Repositories
             return true;
         }
 
-        public override Task<IEnumerable<User>> GetAll()
+        public override IEnumerable<User> GetAll()
         {
             return base.GetAll();
         }  

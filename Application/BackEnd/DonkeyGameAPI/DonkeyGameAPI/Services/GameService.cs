@@ -19,10 +19,10 @@ namespace DonkeyGameAPI.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<IEnumerable<Game>> GetAllGamesNotStarted()
+        public IEnumerable<Game> GetAllGamesNotStarted()
         {
-            return (Task<IEnumerable<Game>>)unitOfWork.GameRepository.GetIncludes().Where(g => g.DateOfStart == null);         
-            
+            IEnumerable<Game> list = unitOfWork.GameRepository.GetIncludes(g => g.Players).Where(g => g.DateOfStart == null).ToList();
+            return list;
         }
 
         public async Task<Game?> StartGame(int gameID)
