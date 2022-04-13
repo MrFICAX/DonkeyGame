@@ -12,7 +12,7 @@ namespace DonkeyGameAPI.IRepositories
         Task<bool> Add(T obj);
         bool Delete(T obj);
         bool Update(T obj);
-        Task<IEnumerable<T>> GetAll();
+        IEnumerable<T> GetAll();
         IEnumerable<T> GetIncludes(params Expression<Func<T, object>>[] includes);
         IEnumerable<T> GetInclude(string navigationPropertyPath);
     }

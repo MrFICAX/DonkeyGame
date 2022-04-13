@@ -20,12 +20,13 @@ namespace DonkeyGameAPI.Controllers
 
         [Route("GetAllGamesNotStarted")]
         [HttpGet]
-        public async Task<ActionResult> GetAllGamesNotStarted()
+        public IActionResult GetAllGamesNotStarted()
         {
-            var Games = await gameService.GetAllGamesNotStarted();
+            var Games = gameService.GetAllGamesNotStarted();
 
             if (Games == null)
                 return BadRequest("No Games Created"); //ERROR
+                //return StatusCode(494);
 
             return Ok(Games);
         }
