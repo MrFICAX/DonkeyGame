@@ -30,6 +30,17 @@ namespace DonkeyGameAPI.Repositories
             return base.GetAll();
         }
 
+        public IEnumerable<Game> GetAllGamesNotStarted()
+        {
+            return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.DateOfStart == null).ToList();
+
+        }
+
+        public Game GetGameWithPlayerStatesAndUserData(int gameID)
+        {
+            return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.GameID == gameID).SingleOrDefault();
+        }
+
         public override Task<Game?> GetOne(int id)
         {
             return base.GetOne(id);          

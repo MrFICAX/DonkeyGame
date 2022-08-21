@@ -26,138 +26,137 @@ namespace DonkeyGameAPI.Migrations
                 {
                     b.Property<int>("CardID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("CardID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CardID"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("Name");
 
                     b.Property<int?>("PlayerStateID")
                         .HasColumnType("int");
 
                     b.Property<int>("Value")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Value");
 
                     b.HasKey("CardID");
 
                     b.HasIndex("PlayerStateID");
 
-                    b.ToTable("Cards");
-                });
-
-            modelBuilder.Entity("DonkeyGameAPI.Models.ChatMessage", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Messages");
+                    b.ToTable("Card");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.Game", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GameID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("GameID");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameID"), 1L, 1);
 
                     b.Property<DateTime?>("DateOfStart")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DateOfStart");
 
                     b.Property<string>("GameCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("GameCode");
 
-                    b.Property<int>("GameOwnerID")
+                    b.Property<int>("GameOwnerUserID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsFinished")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnName("IsFinished");
 
-                    b.Property<int?>("LoserPlayerID")
+                    b.Property<int?>("LoserPlayerUserID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PlayerOnTheMoveID")
+                    b.Property<int?>("PlayerOnTheMoveUserID")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("GameID");
 
-                    b.ToTable("Games");
+                    b.HasIndex("GameOwnerUserID");
+
+                    b.HasIndex("LoserPlayerUserID");
+
+                    b.HasIndex("PlayerOnTheMoveUserID");
+
+                    b.ToTable("Game");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.PlayerState", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("PlayerStateID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("PlayerStateID");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlayerStateID"), 1L, 1);
 
-                    b.Property<int?>("GameId")
+                    b.Property<int?>("GameID")
                         .HasColumnType("int");
 
                     b.Property<int>("Points")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Points");
 
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.HasKey("ID");
+                    b.HasKey("PlayerStateID");
 
-                    b.HasIndex("GameId");
+                    b.HasIndex("GameID");
 
-                    b.ToTable("Players");
+                    b.HasIndex("UserID");
+
+                    b.ToTable("PlayerState");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.User", b =>
                 {
                     b.Property<int>("UserID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("UserID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"), 1L, 1);
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Email");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Password");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Token");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("UserName");
 
                     b.HasKey("UserID");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.Card", b =>
@@ -167,24 +166,46 @@ namespace DonkeyGameAPI.Migrations
                         .HasForeignKey("PlayerStateID");
                 });
 
-            modelBuilder.Entity("DonkeyGameAPI.Models.ChatMessage", b =>
+            modelBuilder.Entity("DonkeyGameAPI.Models.Game", b =>
                 {
-                    b.HasOne("DonkeyGameAPI.Models.Game", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("GameId");
+                    b.HasOne("DonkeyGameAPI.Models.User", "GameOwner")
+                        .WithMany()
+                        .HasForeignKey("GameOwnerUserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DonkeyGameAPI.Models.User", "LoserPlayer")
+                        .WithMany()
+                        .HasForeignKey("LoserPlayerUserID");
+
+                    b.HasOne("DonkeyGameAPI.Models.User", "PlayerOnTheMove")
+                        .WithMany()
+                        .HasForeignKey("PlayerOnTheMoveUserID");
+
+                    b.Navigation("GameOwner");
+
+                    b.Navigation("LoserPlayer");
+
+                    b.Navigation("PlayerOnTheMove");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.PlayerState", b =>
                 {
                     b.HasOne("DonkeyGameAPI.Models.Game", null)
                         .WithMany("Players")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameID");
+
+                    b.HasOne("DonkeyGameAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DonkeyGameAPI.Models.Game", b =>
                 {
-                    b.Navigation("Messages");
-
                     b.Navigation("Players");
                 });
 

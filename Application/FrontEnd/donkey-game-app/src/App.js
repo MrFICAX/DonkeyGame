@@ -15,15 +15,18 @@ import {
 } from "react-router-dom";
 import SignUp from "./SignUp";
 import StartPage from "./StartPage";
+import WelcomeFunc from "./WelcomeFunc";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* <Route path="/" element={<Welcome />} /> */}
+        <Route path="/" element={<WelcomeFunc />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/search" element={<SearchComponent />} />
-        <Route path="/gamePage" element={<StartPage />} />
+        {/* <Route path="/search" element={<SearchComponent />} /> */}
+        <Route path="/startpage" element={<StartPage />} />
       </Routes>
     </Router>
   );

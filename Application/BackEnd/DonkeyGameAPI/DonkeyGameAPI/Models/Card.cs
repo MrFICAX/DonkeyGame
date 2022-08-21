@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DonkeyGameAPI.Models
 {
+    [Table("Card")]
     public class Card
     {
+        [Key]
+        [Column("CardID")]
         public int CardID { get; set; }
 
+        [Column("Value")]
         public int Value { get; set; }
 
+        [Column("Name")]
+        [MaxLength(20)]
         public string Name { get; set; }
 
         public Card(int value, string name)

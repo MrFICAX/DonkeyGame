@@ -9,5 +9,8 @@ namespace DonkeyGameAPI.IRepositories
 {
     public interface IGameRepository : IRepository<Game>
     {
+        public Game GetGameWithPlayerStatesAndUserData(int gameID);
+        public IEnumerable<Game> GetAllGamesNotStarted();
+
     }
 }

@@ -12,7 +12,7 @@ namespace DonkeyGameAPI.Models
         public DbSet<Game> Games { get; set; }
         public DbSet<PlayerState> Players { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<ChatMessage> Messages { get; set; }
+        //public DbSet<ChatMessage> Messages { get; set; }
 
     }
 }

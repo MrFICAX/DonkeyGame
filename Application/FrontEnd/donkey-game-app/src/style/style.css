@@ -1,5 +1,5 @@
 form {
-    width: 100%;
+  width: 100%;
 }
 
 .loginBox {
@@ -14,7 +14,20 @@ form {
   background-color: white;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
 }
-  
+
+.welcomePageBox {
+  display: flex;
+  padding: 20px;
+  justify-content: space-around;
+  background-color: rgb(14, 160, 51);
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
+}
+
+.welcomeButton * {
+  padding: 15px;
+  color: rgb(171, 255, 4); 
+}
+
 .signUpSubmit {
   margin: 25px 0 15px 0;
 }
@@ -63,63 +76,60 @@ form {
 }
 
 .wrapper {
-  width:100%;
+  width: 100%;
   height: 100%;
   background-image: url("http://127.0.0.1:10000/devstoreaccount1/rizzyco-container/RizzyCoMap.png");
   background-size: 100% 100%;
   background-position: center;
-  position: relative
+  position: relative;
 }
 
-img{
+img {
   z-index: -1;
 }
 
-.logOutDiv{
-  float: right;
-}
-
-h1{
+h1 {
   text-align: center;
 }
 
-.HUDDiv{
+.HUDDiv {
   padding: 20px;
   display: flex;
   justify-content: space-between;
-  border:3px solid rgb(156, 141, 141);
-  margin:20px;
-  font-size:18px;
+  border: 3px solid rgb(156, 141, 141);
+  margin: 20px;
+  font-size: 18px;
 }
 
-.controlsContainer{
+.controlsContainer {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   width: 70%;
-  justify-content: stretch; 
+  justify-content: stretch;
 }
 
-.controlsDiv{
+.controlsDiv {
   display: flex;
   justify-content: space-between;
 }
 
-.endTurnBtn{
+.endTurnBtn {
   align-self: center;
   margin-top: 15px;
 }
 
-.waitingLobbyDiv{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.waitingLobbyDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-size: large;
   background-color: #917153;
   width: 30%;
-  margin:auto;
+  margin: auto;
 }
 
-.continueGameBtn, .startGameBtn{
+.continueGameBtn,
+.startGameBtn {
   font-weight: bold;
   font-size: large;
   padding: 10px;
@@ -127,26 +137,27 @@ h1{
 }
 
 .continueGameBtn:hover {
-  background-color: #1a303a; 
+  background-color: #1a303a;
   color: white;
 }
 
 .startGameBtn:hover {
-  background-color: #1a303a; 
+  background-color: #1a303a;
   color: white;
 }
 
-.logoImg{
+.logoImg {
   width: 200px;
   margin: 10px;
 }
 
-.navDiv{
+.navDiv {
   display: flex;
   justify-content: space-between;
 }
 
-.logoutDiv{
+.logoutDiv {
+  float: right;
   margin: 15px;
   font-weight: bold;
   font-size: large;
@@ -156,33 +167,35 @@ h1{
   align-items: center;
   padding: 5px;
 }
-.logoutDiv *{
-  padding: 15px;;
+.logoutDiv * {
+  padding: 15px;
 }
 
-.logoutBtn{
+
+
+.logoutBtn {
   background-color: rgb(185, 46, 46);
   font-size: large;
   color: white;
   margin-top: 10px;
 }
 
-.mapDiv{
+.mapDiv {
   display: flex;
 }
 
-.lobbyDiv{
-  display:flex;
-  flex-direction:row;
-  align-items:center;
+.lobbyDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   font-size: large;
   background-color: #917153;
   width: 70%;
-  margin:auto;
+  margin: auto;
 }
 
-.clearPlayersBtn{
+.clearPlayersBtn {
   font-weight: bold;
   padding: 3px;
   background-color: rgb(92, 88, 88);
@@ -191,34 +204,34 @@ h1{
 }
 
 .clearPlayersBtn:hover {
-  background-color: #395461; 
+  background-color: #395461;
   color: white;
 }
 
-.playersDiv{
+.playersDiv {
   display: flex;
 }
 
-.clearPlayersDiv{
+.clearPlayersDiv {
   display: flex;
   flex-direction: column;
   margin-left: 40px;
 }
 
-.gameSelectDiv{
+.gameSelectDiv {
   align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.homeContainer{
+.homeContainer {
   display: flex;
   flex-direction: column;
 }
 
-.homeGameDiv{
-  border:whitesmoke 1px solid;
+.homeGameDiv {
+  border: whitesmoke 1px solid;
   padding-left: 90px;
   padding-right: 90px;
   margin: 20px;
@@ -228,7 +241,7 @@ h1{
   flex-direction: column;
 }
 
-.continueGameHomeBtn{
+.continueGameHomeBtn {
   font-weight: bold;
   font-size: 14px;
   padding: 5px;
@@ -236,11 +249,11 @@ h1{
 }
 
 .continueGameHomeBtn:hover {
-  background-color: #1a303a; 
+  background-color: #1a303a;
   color: white;
 }
 
-.createLobbyBtn{
+.createLobbyBtn {
   width: 8%;
   align-self: center;
   font-weight: bold;
@@ -249,54 +262,50 @@ h1{
 }
 
 .createLobbyBtn:hover {
-  background-color: #7e376e; 
+  background-color: #7e376e;
   color: white;
 }
 
-.reinforcementDiv{
-  border:1px solid black;
+.reinforcementDiv {
+  border: 1px solid black;
   padding: 15px;
 }
 
-.attackDiv{
-  border:1px solid black;
+.attackDiv {
+  border: 1px solid black;
   padding: 15px;
 }
 
-.defenceDiv{
-  border:1px solid black;
+.defenceDiv {
+  border: 1px solid black;
   padding: 15px;
 }
 
-textarea{
+textarea {
   overflow-y: scroll;
   resize: none;
   height: 100%;
   width: 100%;
-
 }
 
-.textareaDiv{
+.textareaDiv {
   width: 30%;
 }
 
-.cards{
+.cards {
   display: flex;
-
 }
 
-.card{
+.card {
   border: rgb(223, 213, 213) solid 1px;
-  margin:20px;
-  padding:10px;
-  display:flex;
-  flex-direction: column; 
+  margin: 20px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   background-color: rgb(226, 96, 92);
 }
 
-#useCardsBtn{
+#useCardsBtn {
   margin-left: 20px;
 }
-
-        

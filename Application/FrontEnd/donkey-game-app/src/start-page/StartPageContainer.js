@@ -3,15 +3,19 @@ import SearchComponent from "../SearchComponent";
 import Button from '@material-ui/core/Button';
 import TextField from "@material-ui/core/TextField";
 import './StartPage.css'
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import logo from '../donkeyGamelogo.svg';
 
 import GameList from "../games-preview/GameList"
 import CreateGame from './CreateGame';
+import Chat from '../chat/Chat';
+import ChatOverall from '../ChatOverall';
+
 export default class StartPageContainer extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            connection: "",
             game: {
                 code: "",
                 email: "",
@@ -23,7 +27,10 @@ export default class StartPageContainer extends Component {
             },
             btnTxt: "show",
             type: "password",
-            score: "0"
+            score: "0",
+            connection: undefined,
+            messages: [],
+            users: [ "marko", "jovan"]
         }
         this.getGames();
         this.handleChange = this.handleChange.bind(this);
@@ -144,6 +151,73 @@ export default class StartPageContainer extends Component {
     //     }
     // }
 
+    componentDidMount() {
+        //this.startConnection()
+    }
+
+    componentWillUnmount() {
+        //this.closeConnection();
+    }
+
+    startConnection = async () => {
+        try {
+            this.connection = new HubConnectionBuilder()
+                .withUrl("https://localhost:44382/chat")
+                .configureLogging(LogLevel.Information)
+                .build();
+
+            this.connection.on("ReceiveMessage", (user, message) => {
+                this.setState((state, props) => ({
+                    messages: [...this.state.messages, { user, message }]
+                }))    //setMessages(messages => [...messages, { user, message }]);
+            });
+
+            this.connection.on("UsersInRoom", (users) => {
+                this.setState({
+                    users: users
+                })//setUsers(users);
+            });
+
+            this.connection.onclose(e => {
+                this.setState({
+                    connection: "",
+                    messages: [],
+                    users: []
+                })
+                // setConnection();
+                // setMessages([]);
+                // setUsers([]);
+            });
+
+            await this.connection.start();
+            var user = localStorage.username
+            var room = "startPage"
+            await this.connection.invoke("JoinRoom", { user, room });
+            //setConnection(connection);
+            this.setState({
+                connection: this.connection
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    sendMessage = async (message) => {
+        try {
+            await this.connection.invoke("SendMessage", message);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    closeConnection = async () => {
+        try {
+            await this.connection.stop();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     handleLogOut() {
         // if (connection.connectionStarted) {
         //     try {
@@ -166,7 +240,7 @@ export default class StartPageContainer extends Component {
                 <div className="navDiv">
                     <div className='TitleDiv'>
                         <h1 className='pageTitle'>DONKEY GAME</h1>
-                        <img className="logoImg" src="donkeyGameLogo.png" alt="asePage" />
+                        <img src={logo} width="200" height="100" />
                     </div>
                     <div className="logoutDiv">
                         <h2>UserName: </h2>
@@ -209,6 +283,18 @@ export default class StartPageContainer extends Component {
                     </div>
                     <label>{localStorage.lobbyID}</label>
                 </div>
+                <div>
+                    <ChatOverall />
+                </div>
+
+                {/* <div className='chat'>
+                    {this.connection
+                        ?
+                        <Chat sendMessage={this.sendMessage} messages={this.messages} users={this.users} closeConnection={this.closeConnection} />
+                        :
+                        <div></div>
+                    }
+                </div> */}
             </div>
         );
     }

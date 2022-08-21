@@ -21,13 +21,27 @@ namespace DonkeyGameAPI.Services
 
         public IEnumerable<Game> GetAllGamesNotStarted()
         {
-            IEnumerable<Game> list = unitOfWork.GameRepository.GetIncludes(g => g.Players).Where(g => g.DateOfStart == null).ToList();
+            IEnumerable<Game> list = unitOfWork.GameRepository.GetIncludes(g => g.GameOwner , g => g.Players/*, g => g.PlayerOnTheMove*/).Where(g => g.DateOfStart == null).ToList();
+            
+
+            foreach(Game game in list)
+            {
+                game.GameOwner = game.GameOwner.WithoutPassword();
+            }
+
             return list;
         }
 
         public async Task<Game?> StartGame(int gameID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
+//            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.GameID == gameID);
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
+
+            if (game.Players.Count != 4)
+            {
+                return null;
+            }
+
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;
             int num = Random.Shared.Next(0, 3);
@@ -54,6 +68,7 @@ namespace DonkeyGameAPI.Services
             }
             unitOfWork.GameRepository.Update(game);
             await unitOfWork.CompleteAsync();
+            game.ClearPasswords();
             return game;
         }
         public static string RandomString(int length)
@@ -69,7 +84,7 @@ namespace DonkeyGameAPI.Services
             if(author == null) return null;
             Game game = new();
 
-            game.GameOwnerID = author.UserID;
+            game.GameOwner = author.WithoutPassword();
             game.GameCode = RandomString(15);
             game.IsFinished = false;
             game.Players = new List<PlayerState>
@@ -83,27 +98,32 @@ namespace DonkeyGameAPI.Services
 
         public async Task<Game?> JoinGame(int gameID, int userID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
-            
+            // var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.GameID == gameID);
+
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
+
             var whoWantsToJoin = await this.unitOfWork.UserRepository.GetOne(userID);
 
             if (whoWantsToJoin == null) return null;
             if (game == null) return null;
-            if (game.Players.Count > 4) return null;
+            if (game.Players.Count >= 4) return null;
                 
             game.Players.Add(PlayerState.FromUser(whoWantsToJoin));
             unitOfWork.GameRepository.Update(game);               
             
-            await this.unitOfWork.CompleteAsync();       
+            await this.unitOfWork.CompleteAsync();
+            game.ClearPasswords();
             return game;                                 
         }
 
         public async Task<Game?> RemovePlayer(int gameID, int userID)
         {
-            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.Id == gameID);
+            //var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.GameID == gameID);
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
+
 
             if (game == null) return null;
-            var player = game.Players.Find(p => p.UserID == userID);
+            var player = game.Players.Find(p => p.User.UserID == userID);
             if(player == null) return null;
             unitOfWork.PlayerStateRepository.Delete(player);                
             game.Players.Remove(player);
@@ -114,7 +134,7 @@ namespace DonkeyGameAPI.Services
 
         public async Task<bool> RemoveGame(int gameID)
         {
-            var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.Id == gameID);
+            var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.GameID == gameID);
             if (game != null)
             {
                 foreach (var player in game.Players)

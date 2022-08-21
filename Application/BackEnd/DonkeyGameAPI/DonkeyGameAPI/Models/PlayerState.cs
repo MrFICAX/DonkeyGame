@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DonkeyGameAPI.Models
 {
+    [Table("PlayerState")]
     public class PlayerState
     {
-        public int ID { get; set; }
-        public int UserID { get; set; }
+        [Key]
+        [Column("PlayerStateID")]
+        public int PlayerStateID { get; set; }
+
+        [Column("User")]
+        [Required]
+        public User User { get; set; }
+
+        [Column("Points")]
         public int Points { get; set; }
+
         public virtual List<Card> Cards { get; set; }
 
         public static PlayerState FromUser(User user)
         {
             PlayerState playerState = new()
             {
-                UserID = user.UserID,
+                User = user,
                 Points = 0,
                 Cards = new List<Card>()
             };

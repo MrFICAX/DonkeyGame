@@ -89,6 +89,7 @@ export default class SignUpContainer extends Component {
   // }
 
   async submitSignup(user) {
+    var a = 10
     //localStorage.setItem("allMaps", JSON.stringify([]));
     //await this.handleGetMaps();
     await fetch("https://localhost:7225/User/SignUp", {
@@ -97,7 +98,7 @@ export default class SignUpContainer extends Component {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "no-cors"
       },
-      body: JSON.stringify({ "userName": user.usr, "password": user.pw, "email": user.email, token: "" })
+      body: JSON.stringify({ userName: user.usr, password: user.pw, email: user.email, token: "" })
     }).then(res => {
       if (res.ok) {
         res.json().then(d => {
@@ -110,7 +111,7 @@ export default class SignUpContainer extends Component {
           if (localStorage.getItem("redirect"))
             window.location.href = localStorage.getItem("redirect");
           else
-            window.location.href = "/";
+            window.location.href = "/login";
         })
       } else if (res.status === 405) {
         this.setState({
@@ -118,6 +119,8 @@ export default class SignUpContainer extends Component {
           user: { username: "", email: "", password: "", pwconfirm: ""}
         });
       } else {
+        alert("Sign up data submit error!");
+
         this.setState({
           errors: { message: "Error!" }
         });

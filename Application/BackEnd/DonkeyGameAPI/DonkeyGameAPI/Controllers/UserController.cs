@@ -15,7 +15,23 @@ namespace DonkeyGameAPI.Controllers
         public UserController(IUserService userService)
         {
             UserService = userService;
-        }        
+        }
+
+        [Route("LogIn")]
+        [HttpPost]
+        public async Task<ActionResult> LogIn([FromBody] User user)
+        {
+            var resultUser = await UserService.LogIn(user);
+
+            if (resultUser == null)
+                return StatusCode(405); //BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(resultUser);
+
+            //User tmp = user;
+            //var result = this.userService.LogIn(tmp);
+            //return Ok(result);
+        }
 
         [Route("SignUp")]
         [HttpPost]
@@ -28,20 +44,6 @@ namespace DonkeyGameAPI.Controllers
             return Ok(result);
         }
 
-        [Route("LogIn")]
-        [HttpPost]
-        public async Task<ActionResult> LogIn([FromBody] User user)
-        {
-            var resultUser =  await UserService.LogIn(user);
-
-            if (resultUser == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            return Ok(resultUser);
-
-            //User tmp = user;
-            //var result = this.userService.LogIn(tmp);
-            //return Ok(result);
-        }         
+         
     }
 }
