@@ -32,12 +32,25 @@ namespace DonkeyGameAPI.Models
 
         [Column("Token")]
         [MaxLength(255)]
-        public string Token { get; set; }        
+        public string Token { get; set; }
 
         public User WithoutPassword()
         {
             Password = "";
             return this;
+        }
+
+
+        public User copyUserWithoutPassword()
+        {
+            User tmp = new User();
+            tmp.UserID = this.UserID;
+            tmp.UserName = this.UserName;
+            tmp.Password = this.Password;
+            tmp.Email = this.Email;
+            tmp.Token = this.Token;
+
+            return tmp.WithoutPassword();
         }
     }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import Button from '@material-ui/core/Button';
 import TextField from "@material-ui/core/TextField";
-import "../style/style.css";
+import "../../style/style.css";
 // import RaisedButton from "material-ui/RaisedButton";
 // import TextField from "material-ui/TextField";
 import "./loginForm.css"

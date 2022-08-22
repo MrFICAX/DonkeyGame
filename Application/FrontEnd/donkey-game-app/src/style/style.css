@@ -187,11 +187,20 @@ h1 {
 .lobbyDiv {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   font-size: large;
-  background-color: #917153;
   width: 70%;
+  
+  margin: auto;
+}
+
+.waitingLobbyDiv{
+    display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: large;
+  width: 70%;
+  
   margin: auto;
 }
 
@@ -308,4 +317,10 @@ textarea {
 
 #useCardsBtn {
   margin-left: 20px;
+}
+
+.dugme{
+  font-size: 30px;
+    background-color: #fff;
+
 }

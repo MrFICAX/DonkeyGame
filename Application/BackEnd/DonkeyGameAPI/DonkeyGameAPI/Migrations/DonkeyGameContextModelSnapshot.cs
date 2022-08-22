@@ -106,9 +106,17 @@ namespace DonkeyGameAPI.Migrations
                     b.Property<int?>("GameID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("HasSpecialCard")
+                        .HasColumnType("bit")
+                        .HasColumnName("HasSpecialCard");
+
                     b.Property<int>("Points")
                         .HasColumnType("int")
                         .HasColumnName("Points");
+
+                    b.Property<int>("TurnsPassedWithSpecialCard")
+                        .HasColumnType("int")
+                        .HasColumnName("TurnsPassedWithSpecialCard");
 
                     b.Property<int>("UserID")
                         .HasColumnType("int");

@@ -16,6 +16,7 @@ import {
 import SignUp from "./SignUp";
 import StartPage from "./StartPage";
 import WelcomeFunc from "./WelcomeFunc";
+import WaitingLobby from "./components/waiting-lobby/WaitingLobby";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<WelcomeFunc />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/gameLobby" element={<WaitingLobby />} />
         {/* <Route path="/search" element={<SearchComponent />} /> */}
         <Route path="/startpage" element={<StartPage />} />
       </Routes>

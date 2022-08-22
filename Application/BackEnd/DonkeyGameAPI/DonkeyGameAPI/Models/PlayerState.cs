@@ -22,6 +22,12 @@ namespace DonkeyGameAPI.Models
         [Column("Points")]
         public int Points { get; set; }
 
+        [Column("HasSpecialCard")]
+        public bool HasSpecialCard { get; set; }
+
+        [Column("TurnsPassedWithSpecialCard")]
+        public int TurnsPassedWithSpecialCard { get; set; }
+
         public virtual List<Card> Cards { get; set; }
 
         public static PlayerState FromUser(User user)
@@ -30,7 +36,10 @@ namespace DonkeyGameAPI.Models
             {
                 User = user,
                 Points = 0,
-                Cards = new List<Card>()
+                Cards = new List<Card>(),
+                HasSpecialCard = false,
+                TurnsPassedWithSpecialCard = 0
+
             };
             return playerState;
         }

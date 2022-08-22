@@ -85,10 +85,7 @@ if (app.Environment.IsDevelopment())
 //app.UseCors("CORS");
 app.UseCors();
 
-
 app.UseHttpsRedirection();
-
-;
 
 app.MapControllers();
 
@@ -98,7 +95,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<GameHub>("/GameHub");
+    endpoints.MapHub<GameHub>("/game");
 });
 
 app.UseEndpoints(endpoints =>

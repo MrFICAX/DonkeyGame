@@ -1,15 +1,16 @@
 import { React, useState, useEffect, Component } from 'react'
-import SearchComponent from "../SearchComponent";
+import SearchComponent from "../search-games/search-games";
 import Button from '@material-ui/core/Button';
 import TextField from "@material-ui/core/TextField";
 import './StartPage.css'
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import logo from '../donkeyGamelogo.svg';
+import logo from '../../donkeyGamelogo.svg';
 
-import GameList from "../games-preview/GameList"
+import GameList from "../../games-preview/GameList"
 import CreateGame from './CreateGame';
-import Chat from '../chat/Chat';
-import ChatOverall from '../ChatOverall';
+import Chat from '../../chat/Chat';
+import ChatOverall from '../../ChatOverall';
+import Header from './Header.js';
 
 export default class StartPageContainer extends Component {
     constructor(props) {
@@ -57,7 +58,8 @@ export default class StartPageContainer extends Component {
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
-                    localStorage.games = result;
+                    localStorage.games = JSON.stringify(result);
+                    window.dispatchEvent(new Event("storage"));
                 });
 
             } else {
@@ -83,7 +85,7 @@ export default class StartPageContainer extends Component {
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
-                    localStorage.games = result;
+                    localStorage.game = result;
                 });
 
             } else {
@@ -159,64 +161,64 @@ export default class StartPageContainer extends Component {
         //this.closeConnection();
     }
 
-    startConnection = async () => {
-        try {
-            this.connection = new HubConnectionBuilder()
-                .withUrl("https://localhost:44382/chat")
-                .configureLogging(LogLevel.Information)
-                .build();
+    // startConnection = async () => {
+    //     try {
+    //         this.connection = new HubConnectionBuilder()
+    //             .withUrl("https://localhost:44382/chat")
+    //             .configureLogging(LogLevel.Information)
+    //             .build();
 
-            this.connection.on("ReceiveMessage", (user, message) => {
-                this.setState((state, props) => ({
-                    messages: [...this.state.messages, { user, message }]
-                }))    //setMessages(messages => [...messages, { user, message }]);
-            });
+    //         this.connection.on("ReceiveMessage", (user, message) => {
+    //             this.setState((state, props) => ({
+    //                 messages: [...this.state.messages, { user, message }]
+    //             }))    //setMessages(messages => [...messages, { user, message }]);
+    //         });
 
-            this.connection.on("UsersInRoom", (users) => {
-                this.setState({
-                    users: users
-                })//setUsers(users);
-            });
+    //         this.connection.on("UsersInRoom", (users) => {
+    //             this.setState({
+    //                 users: users
+    //             })//setUsers(users);
+    //         });
 
-            this.connection.onclose(e => {
-                this.setState({
-                    connection: "",
-                    messages: [],
-                    users: []
-                })
-                // setConnection();
-                // setMessages([]);
-                // setUsers([]);
-            });
+    //         this.connection.onclose(e => {
+    //             this.setState({
+    //                 connection: "",
+    //                 messages: [],
+    //                 users: []
+    //             })
+    //             // setConnection();
+    //             // setMessages([]);
+    //             // setUsers([]);
+    //         });
 
-            await this.connection.start();
-            var user = localStorage.username
-            var room = "startPage"
-            await this.connection.invoke("JoinRoom", { user, room });
-            //setConnection(connection);
-            this.setState({
-                connection: this.connection
-            })
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    //         await this.connection.start();
+    //         var user = localStorage.username
+    //         var room = "startPage"
+    //         await this.connection.invoke("JoinRoom", { user, room });
+    //         //setConnection(connection);
+    //         this.setState({
+    //             connection: this.connection
+    //         })
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 
-    sendMessage = async (message) => {
-        try {
-            await this.connection.invoke("SendMessage", message);
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    // sendMessage = async (message) => {
+    //     try {
+    //         await this.connection.invoke("SendMessage", message);
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 
-    closeConnection = async () => {
-        try {
-            await this.connection.stop();
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    // closeConnection = async () => {
+    //     try {
+    //         await this.connection.stop();
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 
     handleLogOut() {
         // if (connection.connectionStarted) {
@@ -237,21 +239,13 @@ export default class StartPageContainer extends Component {
     render() {
         return (
             <div>
-                <div className="navDiv">
-                    <div className='TitleDiv'>
-                        <h1 className='pageTitle'>DONKEY GAME</h1>
-                        <img src={logo} width="200" height="100" />
-                    </div>
-                    <div className="logoutDiv">
-                        <h2>UserName: </h2>
-                        <h2>{localStorage.username}</h2>
-                        <Button color="primary" variant="contained" className="logoutBtn" onClick={this.handleLogOut} >LOG OUT</Button>
-                        <br />
-                    </div>
-                </div>
+                <Header logoutHandle={this.handleLogOut} buttonVisible={true} buttonText={"LOG OUT"} ></Header>
+
                 <div className="lobbyDiv">
-                    <SearchComponent maps={localStorage.getItem("allMaps")} />
-                    <GameList games={localStorage.getItem("games")} />
+                    {/* <SearchComponent maps={localStorage.getItem("allMaps")} /> */}
+                    <SearchComponent />
+                    
+                    {/* <GameList games={localStorage.getItem("games")} /> */}
                     {/* <div className="playersDiv">
                                 <label>Players:</label>
                                 <div>
@@ -263,7 +257,7 @@ export default class StartPageContainer extends Component {
                                 </div>
                             </div> */}
                     <div className="createGame">
-                        <CreateGame handleCreateGame={this.handleCreateGame}></CreateGame>
+                        <CreateGame /*handleCreateGame={this.handleCreateGame}*/></CreateGame>
                         {/* <form>
                             <TextField className="textfield"
                                 type="input"
@@ -284,7 +278,7 @@ export default class StartPageContainer extends Component {
                     <label>{localStorage.lobbyID}</label>
                 </div>
                 <div>
-                    <ChatOverall />
+                    <ChatOverall gameCode= {"startPage"}/>
                 </div>
 
                 {/* <div className='chat'>

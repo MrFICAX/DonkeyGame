@@ -50,8 +50,8 @@ h6 {
 }
 
 hr.line {
-    border: 1px solid #313131;
-    width: 175px;
+    border: 3px dashed purple;
+    width: 100%;
 }
 
 .app {
@@ -112,4 +112,57 @@ hr.line {
     font-size: small;
     margin-bottom: 3px;
     margin-right: 5px;
+}
+
+table, th, td {
+  border-width: 10px;
+  border-color: #313131;
+  border-style: solid;
+  color: rgb(6, 21, 21);
+  width: 300px;
+  text-align: center;
+  justify-content: center;
+  font-size: 25px;
+
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+/* style={{ "borderWidth": "3px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid', 'fontFamily':'cursive' }} */
+tr:hover
+{
+    background-color:yellow;
+}
+
+input.checked {
+  background-color: #007a7e;
+  position: relative;
+}
+
+input.checked::before {
+  content: "\2714";
+  font-size: 0.8em;
+  color: #fff;
+  position: absolute;
+  right: 1px;
+  top: -5px;
+}
+
+input[type="checkbox"] {
+  margin-top: 30px;
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  /* creating a custom design */
+  width: 1.0em;
+  height: 1.0em;
+  border-radius: 0.15em;
+  margin-right: 0.5em;
+  border: 0.15em solid #007a7e;
+  outline: none;
+  cursor: pointer;
+}
+
+.dugme{
+  font-size: 30px;
+  background-color: #fff;
 }

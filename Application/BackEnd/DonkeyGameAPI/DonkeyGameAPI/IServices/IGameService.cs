@@ -10,7 +10,7 @@ namespace DonkeyGameAPI.IServices
     public interface IGameService
     {
         IEnumerable<Game> GetAllGamesNotStarted();
-        Task<Game?> CreateGame(int userID);
+        Task<Game?> CreateGame(int userID, string gameID);
         Task<Game?> JoinGame(int gameID, int userID);
         Task<Game?> RemovePlayer(int gameID, int userID);
         Task<bool> RemoveGame(int gameID);

@@ -3,6 +3,7 @@ using DonkeyGameAPI.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using SignalRChat.Hubs;
 
 namespace DonkeyGameAPI.Controllers
 {
@@ -11,11 +12,29 @@ namespace DonkeyGameAPI.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService gameService;
-        private readonly IHubContext<GameHub> hubContext;
-        public GameController(IGameService gameService, IHubContext<GameHub> hubContext)
+        private readonly IHubContext<ChatHub> _chatHub;
+
+        //private readonly IHubContext<GameHub> hubContext;
+        private GameHubService _gameHub;
+
+        public GameHubService GameHub
+        {
+            get
+            {
+                return this._gameHub;
+            }
+
+            set { this._gameHub = value; }
+        }
+
+        public GameController(IGameService gameService, IHubContext<GameHub> hubContext, IHubContext<ChatHub> chatHub)
         {
             this.gameService = gameService;
-            this.hubContext = hubContext;
+            _gameHub = new GameHubService(hubContext);
+            _chatHub = chatHub;
+
+
+            //this.hubContext = hubContext;
         }
 
         [Route("GetAllGamesNotStarted")]
@@ -26,33 +45,39 @@ namespace DonkeyGameAPI.Controllers
 
             if (Games == null)
                 return BadRequest("No Games Created"); //ERROR
-                //return StatusCode(494);
+                                                       //return StatusCode(494);
 
             return Ok(Games);
         }
 
-        [Route("CreateGame/{userID}")]
-        [HttpGet]
-        public async Task<ActionResult> CreateGame(int userID)
+        [Route("CreateGame/{userID}/{gameCode}")]
+        [HttpPost]
+        public async Task<ActionResult> CreateGame(int userID, string gameCode)
         {
-            var Game = await gameService.CreateGame(userID);
+
+            var Game = await gameService.CreateGame(userID, gameCode);
 
             if (Game == null)
                 return BadRequest("Game not created"); //ERROR
 
+            await _chatHub.Clients.All.SendAsync("newGame", Game);
             return Ok(Game);
         }
 
         [Route("JoinGame/{gameID}/{userID}")]
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult> JoinGame(int gameID, int userID)
         {
             var Game = await gameService.JoinGame(gameID, userID);
 
             if (Game == null)
-                return BadRequest("Cannot join game"); //ERROR
+                return StatusCode(405); //ERROR
 
-            await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
+            //await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
+
+            //await GameHub.NotifyOnGameChanges(gameID, "newJoin", Game);
+
+            GameHub.sendGame(Game);
             return Ok(Game);
 
         }
@@ -66,7 +91,10 @@ namespace DonkeyGameAPI.Controllers
             if (Game == null)
                 return BadRequest("Didn't remove"); //ERROR
 
-            await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
+            //await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
+
+            //await GameHub.NotifyOnGameChanges(gameID, "newJoin", Game);
+
             return Ok(Game);
         }
 

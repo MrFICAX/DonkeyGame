@@ -4,14 +4,23 @@ import Chat from './chat/Chat';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from '@material-ui/core/Button';
+import { useEffect } from 'react';
 
-const ChatOverall = () => {
+const ChatOverall = (props) => {
     const [connection, setConnection] = useState();
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [isDisabled, setDisabled] = useState(false);
+    const [chatName, setChatName] = useState(props.gameCode);
 
+    useEffect(() => {
 
+        startChat();
+
+        return () => {
+            this.closeConnection()
+        }
+    }, [])
 
     const joinRoom = async (user, room) => {
         try {
@@ -27,6 +36,17 @@ const ChatOverall = () => {
             connection.on("UsersInRoom", (users) => {
                 setUsers(users);
             });
+
+            connection.on("newGame", (game) => {
+                console.log(game);
+                const array = localStorage.games;
+                const parsedArray = array ? JSON.parse(array) : [];
+                console.log(parsedArray);
+                const newArray = [...parsedArray, game];
+                console.log(newArray);
+                localStorage.games = JSON.stringify(newArray);
+                window.dispatchEvent(new Event("storage"));
+            })
 
             connection.onclose(e => {
                 setConnection();
@@ -63,15 +83,15 @@ const ChatOverall = () => {
     function startChat() {
         
         var user = localStorage.username
-        var room = "startPage"
+        var room = chatName
         joinRoom(user, room)
     }
 
     return <div className='app'>
-        <h2>MyChat</h2>
-        <Button disabled={isDisabled} color="primary" variant="contained" className='welcomeButton' onClick={startChat}>
+        <h1>MyChat</h1>
+        {/* <Button disabled={isDisabled} color="primary" variant="contained" className='welcomeButton' onClick={startChat}>
             START CHAT
-        </Button>
+        </Button> */}
         <hr className='line' />
         {connection
             ? <Chat sendMessage={sendMessage} messages={messages} users={users} closeConnection={closeConnection} />
