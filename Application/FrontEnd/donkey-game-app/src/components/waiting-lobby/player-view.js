@@ -15,7 +15,7 @@ const PlayerView = ({ userID, username, email, removePlayerHandle }) => {
     return (
 
 
-        <div className='profileViewDiv'>
+        <div className='profileViewDiv p-1 m-3'>
             <img src={profile} width="200" height="100" />
             <div >
                 <h4>{username}</h4>
@@ -25,7 +25,7 @@ const PlayerView = ({ userID, username, email, removePlayerHandle }) => {
             </div>
 
             {   game.gameOwner.userName === loggedUsername && username !== loggedUsername &&
-                <Button color="primary" variant="contained" className="logoutBtn" onClick={handleRemoveOtherPlayer} >Remove user from game</Button>}
+                <Button color="primary" variant="contained" className="logoutBtn m-3" onClick={handleRemoveOtherPlayer} >Remove user from game</Button>}
         </div>
 
         // <div>

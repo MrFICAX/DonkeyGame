@@ -7,21 +7,29 @@ export default class PlayerList extends Component {
         super(props);
 
         this.state = {
-            players: props.players,
+            players: this.props.players,
         }
+
+
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({ players: nextProps.players })
     }
 
     render() {
-        return (
-            <div className="searchGame lobbyDiv">
 
-                <h1>Waiting Lobby</h1>
+        return (
+            <div className="searchGame flexColumn">
+
+                <h1>Waiting for players to Join:</h1>
                 <h2></h2>
-                {
-                    this.state.players.map((player) => {
-                        return <PlayerView key={player.playerStateID} userID = {player.user.userID} username={player.user.userName} email={player.user.email} removePlayerHandle={this.props.removePlayerHandle} />
-                    })
-                }
+                <div className='lobbyDiv'>
+                    {
+                        this.state.players.map((player) => {
+                            return <PlayerView key={player.playerStateID} userID={player.user.userID} username={player.user.userName} email={player.user.email} removePlayerHandle={this.props.removePlayerHandle} />
+                        })
+                    }
+                </div>
             </div>
         );
     }

@@ -12,25 +12,28 @@ namespace DonkeyGameAPI.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService gameService;
-        private readonly IHubContext<ChatHub> _chatHub;
+        private readonly IHubContext<GameNChatHub> _chatHub;
+        private readonly IHubContext<GameHub> _gameHub;
+
 
         //private readonly IHubContext<GameHub> hubContext;
-        private GameHubService _gameHub;
+        private GameHubService _gameHubService;
 
         public GameHubService GameHub
         {
             get
             {
-                return this._gameHub;
+                return this._gameHubService;
             }
 
-            set { this._gameHub = value; }
+            set { this._gameHubService = value; }
         }
 
-        public GameController(IGameService gameService, IHubContext<GameHub> hubContext, IHubContext<ChatHub> chatHub)
+        public GameController(IGameService gameService, IHubContext<GameHub> hubContext, IHubContext<GameHub> gameHub, IHubContext<GameNChatHub> chatHub)
         {
             this.gameService = gameService;
-            _gameHub = new GameHubService(hubContext);
+            //_gameHubService = new GameHubService(hubContext);
+            _gameHub = gameHub;
             _chatHub = chatHub;
 
 
@@ -61,6 +64,7 @@ namespace DonkeyGameAPI.Controllers
                 return BadRequest("Game not created"); //ERROR
 
             await _chatHub.Clients.All.SendAsync("newGame", Game);
+            await _gameHub.Clients.All.SendAsync("gameHubnewGame", Game);
             return Ok(Game);
         }
 
@@ -77,7 +81,10 @@ namespace DonkeyGameAPI.Controllers
 
             //await GameHub.NotifyOnGameChanges(gameID, "newJoin", Game);
 
-            GameHub.sendGame(Game);
+            //GameHub.sendGame(Game);
+
+            await _chatHub.Clients.All.SendAsync("updateGame", Game);
+
             return Ok(Game);
 
         }
@@ -94,6 +101,8 @@ namespace DonkeyGameAPI.Controllers
             //await hubContext.Clients.Group("gameID:" + gameID).SendAsync("newJoin", Game);
 
             //await GameHub.NotifyOnGameChanges(gameID, "newJoin", Game);
+
+            await _chatHub.Clients.All.SendAsync("updateGame", Game);
 
             return Ok(Game);
         }
@@ -116,7 +125,9 @@ namespace DonkeyGameAPI.Controllers
         {
             var game = await gameService.StartGame(gameID);
             if (game == null)
-                return BadRequest("Didn't start");
+                return StatusCode(405);
+
+            await _chatHub.Clients.All.SendAsync("updateGame", game);
             return Ok(game);
         }
 

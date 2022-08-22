@@ -11,7 +11,7 @@ export default class LoginContainer extends Component {
             errors: {},
             user: {
                 username: "",
-                password: ""
+                password: "Aa1234@@@@"
             },
             btnTxt: "show",
             type: "password",
@@ -133,7 +133,7 @@ export default class LoginContainer extends Component {
                     localStorage.username = d.userName;
                     localStorage.email = d.email;
                     localStorage.isAuthenticated = true;
-
+                    localStorage.games = '[]';
                     window.location.href = "/startpage";
 
                     // //Obratiti paznju na ovaj if

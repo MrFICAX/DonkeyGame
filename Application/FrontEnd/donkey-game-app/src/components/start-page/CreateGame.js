@@ -3,7 +3,7 @@ import Spinner from "../../Spinner"
 import { Link } from 'react-router-dom';
 import { Redirect } from "react-router-dom";
 import { Button, TextField } from '@material-ui/core';
-
+import { useEffect } from 'react';
 
 
 export default function CreateGame() {
@@ -51,10 +51,14 @@ export default function CreateGame() {
         //     }
         // }
 
-        if (gameCode === "")
-            setGameCode("default")
+        var value = 'default'
+        if (gameCode !== "")
+            value = gameCode;//setGameCode("default");
+        fetchCreateGame(value)
+    }
 
-        fetch("https://localhost:7225/Game/CreateGame/" + localStorage.userID + "/" + gameCode, {
+    function fetchCreateGame(value) {
+        fetch("https://localhost:7225/Game/CreateGame/" + localStorage.userID + "/" + value, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -72,13 +76,15 @@ export default function CreateGame() {
 
             } else {
                 alert("Game not created")
-                this.setState({
-                    errors: { message: res.message }
-                });
+                setGameCode("")
+                // this.setState({
+                //     errors: { message: res.message }
+                // });
             }
         })
             .catch(err => {
                 console.log("Create game error: ", err);
+                setGameCode("")
             });
     }
 

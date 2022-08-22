@@ -100,7 +100,7 @@ app.UseEndpoints(endpoints =>
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<ChatHub>("/chat");
+    endpoints.MapHub<GameNChatHub>("/gameNchat");
 });
 
 app.Run();

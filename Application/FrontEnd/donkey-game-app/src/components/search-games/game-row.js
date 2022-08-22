@@ -34,6 +34,7 @@ export default class GameRow extends React.Component {
         //         gameCode: parseInt(localStorage.gameCode)
         //     }
         // }
+        localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
 
 
         fetch("https://localhost:7225/Game/JoinGame/" + this.state.game.gameID + "/" + localStorage.userID, {
@@ -47,7 +48,8 @@ export default class GameRow extends React.Component {
                 res.json().then(async result => {
                     // localStorage.gameID = result;
                     // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-                    localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
+                    
+                    //localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
                     window.location.href = "/gameLobby";
 
 
@@ -57,10 +59,14 @@ export default class GameRow extends React.Component {
                 this.setState({
                     errors: { message: "Unable to join again!" }
                 });
+                localStorage.setItem('game', null)// = this.state.game;
+
             } else {
                 this.setState({
                     errors: { message: res.message }
                 });
+                localStorage.setItem('game', null)// = this.state.game;
+
             }
         })
             .catch(err => {

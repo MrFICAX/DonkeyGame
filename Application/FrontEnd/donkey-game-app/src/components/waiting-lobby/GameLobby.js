@@ -20,7 +20,7 @@ const theme = createTheme({
         danger: 'orange',
     },
 });
-export default class WaitingLobby extends React.Component {
+export default class GameLobby extends React.Component {
     constructor(props) {
         super(props);
 
@@ -34,11 +34,29 @@ export default class WaitingLobby extends React.Component {
             messages: [],
             users: ["marko", "jovan"]
         }
-        this.connectChat();
-        //this.connectGameListener();
+
         this.removePlayerFromGame = this.removePlayerFromGame.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
         this.removeOtherPlayerFromGame = this.removeOtherPlayerFromGame.bind(this);
+    }
+
+    componentDidMount() {
+        //this.connectGameListener();
+
+        this.connectChat();
+        window.addEventListener("storageGame", () => {
+            var updatedGame = JSON.parse(localStorage.game) || []
+            var myPlayerState = updatedGame.players.find(playerState => playerState.user.userID == localStorage.userID)
+
+            if (myPlayerState == undefined) {
+                var text = this.state.game.gameOwner.userName + " removed you from game with gameCode: " + this.state.game.gameCode + " !"
+                alert(text)
+                window.location.href = '/startPage';
+                localStorage.game = null;
+            }
+
+            this.setState({ game: JSON.parse(localStorage.game) || [] });
+        });
     }
 
 
@@ -216,7 +234,46 @@ export default class WaitingLobby extends React.Component {
     }
 
     handleStartGame() {
+        var gameID = this.state.game.gameID
 
+        fetch("https://localhost:7225/Game/StartGame/" + gameID, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+            //,body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    // localStorage.gameID = result;
+                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
+
+
+                    // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
+                    // this.setState(state => {
+                    //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
+                    //     console.log(tmp);
+                    //    return { game: tmp}
+                    // });
+
+                });
+
+            } else if (res.status == 405) {
+                this.setState({
+                    errors: { message: "Unable to start game!" }
+                });
+                console.log("Unable to start game!")
+                alert("No enough players in game!")
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
+                console.log("Route not found! Error code: " + res.status)
+            }
+        })
+            .catch(err => {
+                console.log("Join game error: ", err);
+            });
     }
 
     goBackToStartGamePage() {
@@ -232,17 +289,19 @@ export default class WaitingLobby extends React.Component {
                     :
                     <Header logoutHandle={this.removePlayerFromGame} buttonVisible={true} buttonText={"GO BACK"} ></Header>
                 }
-                <div className="searchGame waitingLobbyDiv">
+                <div className="searchGame gameLobbyDiv">
                     <h1>Game code: {this.state.game.gameCode}</h1>
                     <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
                     <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
 
+                {!this.state.game.dateOfStart &&
 
                     <PlayerList players={this.state.game.players} removePlayerHandle={this.removeOtherPlayerFromGame} />
-
-                    {this.state.game.gameOwner.email === localStorage.email &&
+                }
+                    {!this.state.game.dateOfStart && this.state.game.gameOwner.email === localStorage.email &&
                         <Button className="dugme" color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleStartGame()}>START GAME</Button>
                     }
+                
 
                 </div>
                 <div>

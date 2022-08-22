@@ -63,10 +63,10 @@ namespace DonkeyGameAPI.Services
             var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
 
             //OVO OBAVEZNO OTKOMENTARISATI 
-            //if (game.Players.Count != 4)
-            //{
-            //    return null;
-            //}
+            if (game.Players.Count != 4)
+            {
+                return null;
+            }
 
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;

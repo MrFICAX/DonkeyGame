@@ -30,6 +30,16 @@ h2 {
   box-shadow: 0 0 20px 20px rgba(68, 82, 17, 0.4);
 }
 
+.flexColumn{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: large;
+  width: 70%;
+  
+  margin: auto;
+}
+
 .playerList{
   text-align: center;
   position: relative;

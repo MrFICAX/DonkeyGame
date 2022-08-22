@@ -30,12 +30,13 @@ export default class StartPageContainer extends Component {
             type: "password",
             score: "0",
             connection: undefined,
+            gameConnection: "",
             messages: [],
             users: [ "marko", "jovan"]
         }
         this.getGames();
         this.handleChange = this.handleChange.bind(this);
-
+        this.connectGameListener = this.connectGameListener.bind(this);
     };
 
 
@@ -47,6 +48,58 @@ export default class StartPageContainer extends Component {
         this.setState({
             game
         });
+    }
+
+    componentDidMount(){
+        //this.connectGameListener();
+    }
+
+    connectGameListener = async () => {
+        try {
+            this.gameConnection = new HubConnectionBuilder()
+                .withUrl("https://localhost:44382/game")
+                // , 
+                // {
+                //     skipNegotiation: true,
+                //     transport: HttpTransportType.WebSockets
+                // })
+                .configureLogging(LogLevel.Information)
+                .build();
+
+            this.gameConnection.on("ReceiveMessage", (user, message) => {
+                this.setState((state, props) => ({
+                    messages: [...this.state.messages, { user, message }]
+                }))    //setMessages(messages => [...messages, { user, message }]);
+            });
+
+            this.gameConnection.on("UsersInRoom", (users) => {
+                this.setState({
+                    users: users
+                })//setUsers(users);
+            });
+
+            this.gameConnection.onclose(e => {
+                this.setState({
+                    gameConnection: ""
+                })
+                // setConnection();
+                // setMessages([]);
+                // setUsers([]);
+            });
+
+            this.gameConnection.start();
+            var user = localStorage.username
+            var room = this.state.game.gameCode
+            //await this.connection.invoke("JoinGroup", { user, room });
+
+            //setConnection(connection);
+
+            this.setState({
+                gameConnection: this.gameConnection
+            })
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     getGames() {
