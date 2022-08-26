@@ -12,7 +12,6 @@ namespace DonkeyGameAPI.IRepositories
         public Game GetGameWithPlayerStatesAndUserData(int gameID);
         public IEnumerable<Game> GetAllGamesNotStarted();
         public Game GetGameByGameCode(string gameCode);
-
-
+        public Game GetGameWithPlayerStatesAndCardsAndUserData(int gameID);
     }
 }

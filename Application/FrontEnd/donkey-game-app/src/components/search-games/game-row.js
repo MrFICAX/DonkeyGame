@@ -16,6 +16,10 @@ export default class GameRow extends React.Component {
         localStorage.gameID = 3 //hardkodirano za testiranje
     };
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ game: nextProps.game })
+    }
+
     handleOpenGame(){
         localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
         window.location.href = "/gameLobby";
@@ -37,7 +41,7 @@ export default class GameRow extends React.Component {
         localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
 
 
-        fetch("https://localhost:7225/Game/JoinGame/" + this.state.game.gameID + "/" + localStorage.userID, {
+        fetch("https://localhost:5225/Game/JoinGame/" + this.state.game.gameID + "/" + localStorage.userID, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

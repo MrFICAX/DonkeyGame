@@ -1,9 +1,12 @@
-﻿using DonkeyGameAPI.Hubs;
+﻿using DonkeyGameAPI.DTOs;
+using DonkeyGameAPI.Hubs;
 using DonkeyGameAPI.IServices;
+using DonkeyGameAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SignalRChat.Hubs;
+using System.Collections.Generic;
 
 namespace DonkeyGameAPI.Controllers
 {
@@ -127,8 +130,36 @@ namespace DonkeyGameAPI.Controllers
             if (game == null)
                 return StatusCode(405);
 
-            await _chatHub.Clients.All.SendAsync("updateGame", game);
+            //game.Players.ForEach(playerState =>
+            //{
+            //    MyCards myCards = new MyCards();
+            //    myCards.PlayerStateID = playerState.PlayerStateID;
+            //    myCards.gameCode = game.GameCode;
+            //    myCards.myCards = playerState.Cards;
+            //    _chatHub.Clients.Group(playerState.User.UserID.ToString()).SendAsync("myCards", myCards);
+
+            //});
+
+            game.Players.ForEach(playerState => playerState.Cards = new List<Card>());
+
+            await _chatHub.Clients.All.SendAsync("gameStarted", game);
             return Ok(game);
+        }
+
+        [Route("GetMyCards/{gameID}/{userID}")]
+        [HttpGet]
+        public async Task<ActionResult> GetMyCards(int gameID, int userID)
+        {
+            var myCards = await gameService.GetMyCards(gameID, userID);
+
+            if (myCards == null)
+                return StatusCode(405);
+
+            await _chatHub.Clients.Group(myCards.PlayerStateID.ToString()).SendAsync("myCards", myCards);
+            return Ok(myCards);
+            //return Ok(game);
+
+            return null;
         }
 
         [Route("PassACard/{gameID}/{playerfromID}/{playertoID}/{cardID}")]

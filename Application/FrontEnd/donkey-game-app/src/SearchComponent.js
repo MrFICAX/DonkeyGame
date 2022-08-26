@@ -53,7 +53,7 @@ class GameRow extends React.Component {
         }
 
 
-        fetch("https://localhost:7225/Game/JoinGame/" + localStorage.gameID +"/"+ localStorage.userID, {
+        fetch("https://localhost:5225/Game/JoinGame/" + localStorage.gameID +"/"+ localStorage.userID, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -288,7 +288,7 @@ export default class SearchComponent extends React.Component {
 
     async getAllGamesNotStarted() {
         
-        await fetch("https://localhost:7225/Game/GetAllGamesNotStarted", {
+        await fetch("https://localhost:5225/Game/GetAllGamesNotStarted", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

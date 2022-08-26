@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="NewFolder1\" />
     <Folder Include="UOfW\" />
     <Folder Include="Repositories\" />
   </ItemGroup>

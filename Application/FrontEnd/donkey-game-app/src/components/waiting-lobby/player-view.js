@@ -3,8 +3,6 @@ import Button from '@material-ui/core/Button';
 
 const PlayerView = ({ userID, username, email, removePlayerHandle }) => {
     var game = JSON.parse(localStorage.getItem('game'))
-
-    console.log(game);
     var loggedUsername = localStorage.username
 
     function handleRemoveOtherPlayer(){

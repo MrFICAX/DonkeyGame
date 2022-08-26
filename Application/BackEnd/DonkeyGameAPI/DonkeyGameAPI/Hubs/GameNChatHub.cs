@@ -11,11 +11,14 @@ namespace SignalRChat.Hubs
     {
         private readonly string _botUser;
         private readonly IDictionary<string, UserConnection> _connections;
+        private readonly IDictionary<string, List<string>> _layedUsers;
+
 
         public GameNChatHub(IDictionary<string, UserConnection> connections)
         {
-            _botUser = "MyChat Bot";            
+            _botUser = "MyChat Bot";
             _connections = connections;
+            _layedUsers = new Dictionary<string, List<string>>();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
@@ -32,13 +35,38 @@ namespace SignalRChat.Hubs
 
         public async Task JoinRoom(UserConnection userConnection)
         {
-           await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
+            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
 
             _connections[Context.ConnectionId] = userConnection;
 
             await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room} chat");
 
             await SendUsersConnected(userConnection.Room);
+        }
+
+        public async Task ClearList(string gameCode)
+        {
+            Console.WriteLine(gameCode);
+            if (_layedUsers.ContainsKey(gameCode))
+                _layedUsers[gameCode].Clear();
+            else
+                _layedUsers.Add(gameCode, new List<string>());
+                //await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
+
+                //_connections[Context.ConnectionId] = userConnection;
+
+                await Clients.Group(gameCode).SendAsync("ClearListFinished");
+
+            //await SendUsersConnected(userConnection.Room);
+        }
+
+        public async Task CreateSingleGroup(string playerStateID)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, playerStateID);
+
+            await Clients.Group(playerStateID.ToString()).SendAsync("GroupCreated", playerStateID, "Group for this user is created!");
+            //await Clients.All.SendAsync("ReceiveMessage", _botUser, "Testing");
+
         }
 
         public async Task SendMessage(string message)

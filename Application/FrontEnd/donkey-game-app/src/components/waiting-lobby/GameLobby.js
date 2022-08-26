@@ -10,6 +10,7 @@ import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/si
 import ChatOverall from '../../ChatOverall';
 import PlayerList from './player-list';
 import { Button } from '@material-ui/core';
+import PlayerDataList from '../../game-play/PlayerDataList';
 
 const theme = createTheme({
     palette: {
@@ -48,10 +49,11 @@ export default class GameLobby extends React.Component {
             var updatedGame = JSON.parse(localStorage.game) || []
             var myPlayerState = updatedGame.players.find(playerState => playerState.user.userID == localStorage.userID)
 
-            if (myPlayerState == undefined) {
+            if (myPlayerState == undefined ) {
                 var text = this.state.game.gameOwner.userName + " removed you from game with gameCode: " + this.state.game.gameCode + " !"
-                alert(text)
+                //alert(text)
                 window.location.href = '/startPage';
+                //localStorage.myCards = null;
                 localStorage.game = null;
             }
 
@@ -160,7 +162,7 @@ export default class GameLobby extends React.Component {
         console.log(this.state);
         var gameID = this.state.game.gameID
 
-        fetch("https://localhost:7225/Game/RemovePlayer/" + gameID + "/" + localStorage.userID, {
+        fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userID, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -181,14 +183,20 @@ export default class GameLobby extends React.Component {
                 this.setState({
                     errors: { message: "Unable to join again!" }
                 });
+                window.location.href = "/startPage";
+
             } else {
                 this.setState({
                     errors: { message: res.message }
                 });
+                window.location.href = "/startPage";
+
             }
         })
             .catch(err => {
                 console.log("Join game error: ", err);
+                window.location.href = "/startPage";
+
             });
     }
 
@@ -196,7 +204,7 @@ export default class GameLobby extends React.Component {
         console.log(this.state);
         var gameID = this.state.game.gameID
 
-        fetch("https://localhost:7225/Game/RemovePlayer/" + gameID + "/" + localStorage.userIDtoRemove, {
+        fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userIDtoRemove, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -236,7 +244,7 @@ export default class GameLobby extends React.Component {
     handleStartGame() {
         var gameID = this.state.game.gameID
 
-        fetch("https://localhost:7225/Game/StartGame/" + gameID, {
+        fetch("https://localhost:5225/Game/StartGame/" + gameID, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -294,14 +302,19 @@ export default class GameLobby extends React.Component {
                     <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
                     <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
 
-                {!this.state.game.dateOfStart &&
+                    {!this.state.game.dateOfStart &&
 
-                    <PlayerList players={this.state.game.players} removePlayerHandle={this.removeOtherPlayerFromGame} />
-                }
+                        <PlayerList players={this.state.game.players} removePlayerHandle={this.removeOtherPlayerFromGame} />
+                    }
                     {!this.state.game.dateOfStart && this.state.game.gameOwner.email === localStorage.email &&
                         <Button className="dugme" color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleStartGame()}>START GAME</Button>
                     }
-                
+
+                    {this.state.game.dateOfStart && 
+                        <PlayerDataList game={this.state.game}/>
+
+                    }
+
 
                 </div>
                 <div>

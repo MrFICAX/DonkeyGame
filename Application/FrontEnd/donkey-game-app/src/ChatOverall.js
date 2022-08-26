@@ -25,7 +25,7 @@ const ChatOverall = (props) => {
     const joinRoom = async (user, room) => {
         try {
             const connection = new HubConnectionBuilder()
-                .withUrl("https://localhost:7225/gameNchat")
+                .withUrl("https://localhost:5225/gameNchat")
                 .configureLogging(LogLevel.Information)
                 .build();
 
@@ -36,6 +36,10 @@ const ChatOverall = (props) => {
             connection.on("UsersInRoom", (users) => {
                 setUsers(users);
             });
+
+            // connection.on("GroupCreated", (user) => {
+            //     //alert(user + " group created!");
+            // });
 
             connection.on("newGame", (game) => {
                 console.log(game);
@@ -48,15 +52,23 @@ const ChatOverall = (props) => {
                 window.dispatchEvent(new Event("storage"));
             })
 
+            connection.on("myCards", (myCards) => {
+                console.log("STAMPAM MOJE KARTE:")
+
+                //localStorage.myCards = null;
+                alert("Cards downloaded via hub!")
+                console.log(myCards);
+                localStorage.myCards = JSON.stringify(myCards);
+                window.dispatchEvent(new Event("myCards"));
+            })
+
             connection.on("updateGame", (game) => {
-                console.log(game);
                 const array = localStorage.games;
                 const parsedArray = array ? JSON.parse(array) : [];
-                console.log(parsedArray);
 
                 const singleGame = localStorage.game
                 const parsedGame = singleGame ? JSON.parse(singleGame) : [];
-                if (parsedGame?.gameCode === game.gameCode){
+                if (parsedGame?.gameCode === game.gameCode) {
                     localStorage.game = JSON.stringify(game);
                     window.dispatchEvent(new Event("storageGame"));
                 }
@@ -71,6 +83,58 @@ const ChatOverall = (props) => {
                 localStorage.games = JSON.stringify(updatedGames);
                 window.dispatchEvent(new Event("storage"));
             })
+
+            connection.on("gameStarted", (game) => {
+                var myId = localStorage.userID;
+                getMyCards(myId, game.gameID);
+
+                console.log(game);
+                const array = localStorage.games;
+                const parsedArray = array ? JSON.parse(array) : [];
+                console.log(parsedArray);
+
+                const singleGame = localStorage.game
+                const parsedGame = singleGame ? JSON.parse(singleGame) : [];
+                if (parsedGame?.gameCode === game.gameCode) {
+                    localStorage.game = JSON.stringify(game);
+                    window.dispatchEvent(new Event("storageGame"));
+                }
+
+                const updatedGames = parsedArray.map(singleGame => {
+                    // 👇️ if id equals 2, update country property
+                    if (singleGame.gameCode === game.gameCode) {
+                        return game;
+                    }
+                    return singleGame;
+                });
+                localStorage.games = JSON.stringify(updatedGames);
+                window.dispatchEvent(new Event("storage"));
+
+
+                //---------------------------------------------------
+                if (game.gameOwner.userID == myId) {
+                    var gameCode = game.gameCode
+                    connection.invoke("ClearList", gameCode);
+
+                    connection.on("ClearListFinished", () => {
+                        //alert("List of layed users cleared!");
+                    });
+                }
+
+                var myPlayerState = game.players.find(singlePlayerState => {
+                    return singlePlayerState.user.userID === parseInt(myId);
+                });
+                connection.invoke("CreateSingleGroup", myPlayerState.playerStateID.toString());
+
+                connection.on("GroupCreated", (user, message) => {
+                    //setMessages(messages => [...messages, { user, message }]);
+                    //alert("Group created for playerStateID: " + user);
+
+                });
+
+            })
+
+
 
             connection.onclose(e => {
                 setConnection();
@@ -87,6 +151,37 @@ const ChatOverall = (props) => {
         } catch (e) {
             console.log(e);
         }
+    }
+
+    const getMyCards = async (myId, gameID) => {
+        fetch("https://localhost:5225/Game/GetMyCards/" + gameID + "/" + myId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+            //body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    // localStorage.game = result;
+                    // // await sendCreateGameMessage(localStorage.lobbyID, result);
+                    // alert("Game created")
+                    // localStorage.setItem('game', JSON.stringify(result))// = this.state.game;
+                });
+                // window.location.href = "/gameLobby"
+
+            } else {
+                alert("GetMyCards didnt fetch cards!")
+                // setGameCode("")
+                // this.setState({
+                //     errors: { message: res.message }
+                // });
+            }
+        })
+            .catch(err => {
+                console.log("Create game error: ", err);
+                // setGameCode("")
+            });
     }
 
     const sendMessage = async (message) => {
@@ -106,7 +201,7 @@ const ChatOverall = (props) => {
     }
 
     function startConnection() {
-        
+
         var user = localStorage.username
         var room = chatName
         joinRoom(user, room)

@@ -41,6 +41,11 @@ namespace DonkeyGameAPI.Repositories
             return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.GameID == gameID).SingleOrDefault();
         }
 
+        public Game GetGameWithPlayerStatesAndCardsAndUserData(int gameID)
+        {
+            return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.Cards).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.GameID == gameID).SingleOrDefault();
+        }
+
         public Game GetGameByGameCode(string gameCode)
         {
             return _context.Games.Where(game => game.GameCode == gameCode).SingleOrDefault();
@@ -56,5 +61,6 @@ namespace DonkeyGameAPI.Repositories
         {
             return base.Update(entity);
         }
+
     }
 }

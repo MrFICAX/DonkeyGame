@@ -194,6 +194,16 @@ h1 {
   margin: auto;
 }
 
+.playersListDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: large;
+  width: 80%;
+  
+  margin: auto;
+}
+
 .waitingLobbyDiv{
     display: flex;
   flex-direction: column;

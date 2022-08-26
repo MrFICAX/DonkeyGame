@@ -32,12 +32,18 @@ export default class StartPageContainer extends Component {
             connection: undefined,
             gameConnection: "",
             messages: [],
-            users: [ "marko", "jovan"]
+            users: ["marko", "jovan"]
         }
         this.getGames();
         this.handleChange = this.handleChange.bind(this);
         this.connectGameListener = this.connectGameListener.bind(this);
     };
+
+    componentDidMount() {
+        localStorage.game = null;
+        //localStorage.myCards = null;
+        localStorage.userIDtoRemove = null;
+    }
 
 
     handleChange(event) {
@@ -50,7 +56,7 @@ export default class StartPageContainer extends Component {
         });
     }
 
-    componentDidMount(){
+    componentDidMount() {
         //this.connectGameListener();
     }
 
@@ -103,7 +109,7 @@ export default class StartPageContainer extends Component {
     }
 
     getGames() {
-        fetch("https://localhost:7225/Game/GetAllGamesNotStarted", {
+        fetch("https://localhost:5225/Game/GetAllGamesNotStarted", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -130,7 +136,7 @@ export default class StartPageContainer extends Component {
 
         //gameSelected
 
-        fetch("https://localhost:7225/Game/JoinGame/" + this.gameSelected.gameID + "/" + localStorage.userID, {
+        fetch("https://localhost:5225/Game/JoinGame/" + this.gameSelected.gameID + "/" + localStorage.userID, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -163,7 +169,7 @@ export default class StartPageContainer extends Component {
     //         "mapID": parseInt(localStorage.mapID)
     //     }
 
-    //     fetch("https://localhost:7225/Game/CreateGame"+ localStorage.userID, {
+    //     fetch("https://localhost:5225/Game/CreateGame"+ localStorage.userID, {
     //         method: "POST",
     //         headers: {
     //             "Content-Type": "application/json"
@@ -297,7 +303,7 @@ export default class StartPageContainer extends Component {
                 <div className="lobbyDiv">
                     {/* <SearchComponent maps={localStorage.getItem("allMaps")} /> */}
                     <SearchComponent />
-                    
+
                     {/* <GameList games={localStorage.getItem("games")} /> */}
                     {/* <div className="playersDiv">
                                 <label>Players:</label>
@@ -331,7 +337,7 @@ export default class StartPageContainer extends Component {
                     <label>{localStorage.lobbyID}</label>
                 </div>
                 <div>
-                    <ChatOverall gameCode= {"startPage"}/>
+                    <ChatOverall gameCode={"startPage"} />
                 </div>
 
                 {/* <div className='chat'>

@@ -49,7 +49,7 @@ export default class SearchComponent extends React.Component {
 
     async getAllGamesNotStarted() {
         
-        await fetch("https://localhost:7225/Game/GetAllGamesNotStarted", {
+        await fetch("https://localhost:5225/Game/GetAllGamesNotStarted", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

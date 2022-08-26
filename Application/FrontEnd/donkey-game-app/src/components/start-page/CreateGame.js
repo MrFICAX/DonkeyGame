@@ -13,7 +13,7 @@ export default function CreateGame() {
 
     // function CreateGame() {
     //     setShowSpinner(true);
-    //     fetch("https://localhost:7225/Game/CreateGame", {
+    //     fetch("https://localhost:5225/Game/CreateGame", {
     //         method: "POST",
     //         headers: { "Content-Type": "application/json" },
     //         body: JSON.stringify({ "gameCode": gameCode })
@@ -58,7 +58,7 @@ export default function CreateGame() {
     }
 
     function fetchCreateGame(value) {
-        fetch("https://localhost:7225/Game/CreateGame/" + localStorage.userID + "/" + value, {
+        fetch("https://localhost:5225/Game/CreateGame/" + localStorage.userID + "/" + value, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -69,7 +69,7 @@ export default function CreateGame() {
                 res.json().then(async result => {
                     localStorage.game = result;
                     // await sendCreateGameMessage(localStorage.lobbyID, result);
-                    alert("Game created")
+                    //alert("Game created")
                     localStorage.setItem('game', JSON.stringify(result))// = this.state.game;
                 });
                 window.location.href = "/gameLobby"

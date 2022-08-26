@@ -1,4 +1,5 @@
-﻿using DonkeyGameAPI.Hubs;
+﻿using DonkeyGameAPI.DTOs;
+using DonkeyGameAPI.Hubs;
 using DonkeyGameAPI.IServices;
 using DonkeyGameAPI.Models;
 using DonkeyGameAPI.UOfW;
@@ -63,10 +64,10 @@ namespace DonkeyGameAPI.Services
             var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
 
             //OVO OBAVEZNO OTKOMENTARISATI 
-            if (game.Players.Count != 4)
-            {
-                return null;
-            }
+            //if (game.Players.Count != 4)
+            //{
+            //    return null;
+            //}
 
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;
@@ -76,8 +77,8 @@ namespace DonkeyGameAPI.Services
             Card card = new(0, "");
 
             Random rnd = new Random();
-            int randomIndexForSpecialCard = rnd.Next() % 4;
-            int randomIndexForFiveCards = rnd.Next() % 4;
+            int randomIndexForSpecialCard = rnd.Next() % game.Players.Count;
+            int randomIndexForFiveCards = rnd.Next() % game.Players.Count;
 
             delt.Add(card);
             foreach (PlayerState playerState in game.Players)
@@ -226,6 +227,24 @@ namespace DonkeyGameAPI.Services
             }
 
             return list;
+        }
+
+        public async Task<MyCards?> GetMyCards(int gameID, int userID)
+        {
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+
+            MyCards myCards = new MyCards();
+            if (game != null)
+            {
+
+                int myPlayerStateId = game.Players.Find(state => state.User.UserID == userID).PlayerStateID;
+                myCards.PlayerStateID = myPlayerStateId;
+                myCards.gameCode = game.GameCode;
+                myCards.myCards = game.Players.Find(state => state.User.UserID == userID).Cards;
+                return myCards;
+            }
+
+            return null;
         }
     }
 }

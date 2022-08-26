@@ -1,4 +1,5 @@
-﻿using DonkeyGameAPI.Models;
+﻿using DonkeyGameAPI.DTOs;
+using DonkeyGameAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace DonkeyGameAPI.IServices
         Task<bool> RemoveGame(int gameID);
         Task<Game?> StartGame(int gameID);
         Task<Game> PassACard(int gameID, int playerfromID, int playertoID, int cardID);
+        Task<MyCards?> GetMyCards(int gameID, int userID);
     }
 }

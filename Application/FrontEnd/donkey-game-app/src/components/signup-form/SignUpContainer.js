@@ -92,7 +92,7 @@ export default class SignUpContainer extends Component {
     var a = 10
     //localStorage.setItem("allMaps", JSON.stringify([]));
     //await this.handleGetMaps();
-    await fetch("https://localhost:7225/User/SignUp", {
+    await fetch("https://localhost:5225/User/SignUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
