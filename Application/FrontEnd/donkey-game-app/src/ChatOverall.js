@@ -12,15 +12,36 @@ const ChatOverall = (props) => {
     const [users, setUsers] = useState([]);
     const [isDisabled, setDisabled] = useState(false);
     const [chatName, setChatName] = useState(props.gameCode);
+    const [game, setGame] = useState(props.game);
 
     useEffect(() => {
 
-        startConnection();
-
+        startConnection()
         return () => {
             this.closeConnection()
         }
     }, [])
+
+    useEffect(() => {
+        if (connection !== undefined) {
+
+            if (game.gameCode !== "mockGame") {
+                CreateSingleGroupForUser()
+            }
+        }
+    }, [connection])
+
+    function CreateSingleGroupForUser() {
+        if (game.dateOfStart != null) {
+
+            var myPlayerState = game.players.find(singlePlayerState => {
+                return singlePlayerState.user.userID === parseInt(localStorage.userID);
+            });
+            connection.invoke("CreateSingleGroup", myPlayerState.playerStateID.toString());
+            props.getMyCards();
+        }
+
+    }
 
     const joinRoom = async (user, room) => {
         try {
@@ -53,11 +74,11 @@ const ChatOverall = (props) => {
             })
 
             connection.on("myCards", (myCards) => {
-                console.log("STAMPAM MOJE KARTE:")
+                // console.log("STAMPAM MOJE KARTE:")
 
                 //localStorage.myCards = null;
-                alert("Cards downloaded via hub!")
-                console.log(myCards);
+                //alert("Cards downloaded via hub!")
+                //console.log(myCards);
                 localStorage.myCards = JSON.stringify(myCards);
                 window.dispatchEvent(new Event("myCards"));
             })
@@ -137,7 +158,7 @@ const ChatOverall = (props) => {
 
 
             connection.onclose(e => {
-                setConnection();
+                setConnection(undefined);
                 setMessages([]);
                 setUsers([]);
             });
@@ -200,11 +221,12 @@ const ChatOverall = (props) => {
         }
     }
 
-    function startConnection() {
+    async function startConnection() {
 
         var user = localStorage.username
         var room = chatName
-        joinRoom(user, room)
+        await joinRoom(user, room)
+        return
     }
 
     return <div className='app'>

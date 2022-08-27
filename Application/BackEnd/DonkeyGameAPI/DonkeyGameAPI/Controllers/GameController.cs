@@ -56,6 +56,19 @@ namespace DonkeyGameAPI.Controllers
             return Ok(Games);
         }
 
+        [Route("GetAllGamesNotStartedOrWithMe/{userID}")]
+        [HttpGet]
+        public IActionResult GetAllGamesNotStartedOrWithMe(int userID)
+        {
+            var Games = gameService.GetAllGamesNotStartedOrWithMe(userID);
+
+            if (Games == null)
+                return BadRequest("No Games Created"); //ERROR
+                                                       //return StatusCode(494);
+
+            return Ok(Games);
+        }
+
         [Route("CreateGame/{userID}/{gameCode}")]
         [HttpPost]
         public async Task<ActionResult> CreateGame(int userID, string gameCode)
@@ -162,13 +175,30 @@ namespace DonkeyGameAPI.Controllers
             return null;
         }
 
-        [Route("PassACard/{gameID}/{playerfromID}/{playertoID}/{cardID}")]
+        [Route("PassACard/{gameID}/{playerfromID}/{cardID}")]
         [HttpGet]
-        public async Task<ActionResult> PassACard(int gameID, int playerfromID, int playertoID, int cardID)
+        public async Task<ActionResult> PassACard(int gameID, int playerfromID, int cardID)
         {
-            var game = await gameService.PassACard(gameID, playerfromID, playertoID, cardID);
+            var game = await gameService.PassACard(gameID, playerfromID, cardID);
             if (game == null)
                 return BadRequest("Didn't pass a card");
+
+            var playerStateFromIdx = game.Players.FindIndex(p => p.User.UserID == playerfromID);
+
+            var playerStateTo = game.Players[(playerStateFromIdx + 1) % game.Players.Count];
+
+
+            var myCards = await gameService.GetMyCards(gameID, playerfromID);
+            var playerToCards = await gameService.GetMyCards(gameID, playerStateTo.User.UserID);
+
+
+            await _chatHub.Clients.Group(game.Players[playerStateFromIdx].PlayerStateID.ToString()).SendAsync("myCards", myCards);
+            await _chatHub.Clients.Group(playerStateTo.PlayerStateID.ToString()).SendAsync("myCards", playerToCards);
+
+            game.Players.ForEach(playerState => playerState.Cards = new List<Card>());
+            await _chatHub.Clients.Group(game.GameCode).SendAsync("updateGame", game);
+
+
             return Ok(game);
         }
 

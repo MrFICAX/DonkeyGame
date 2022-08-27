@@ -20,7 +20,7 @@ export default class GameRow extends React.Component {
         this.setState({ game: nextProps.game })
     }
 
-    handleOpenGame(){
+    handleOpenGame() {
         localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
         window.location.href = "/gameLobby";
     }
@@ -52,14 +52,14 @@ export default class GameRow extends React.Component {
                 res.json().then(async result => {
                     // localStorage.gameID = result;
                     // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-                    
+
                     //localStorage.setItem('game', JSON.stringify(this.state.game))// = this.state.game;
                     window.location.href = "/gameLobby";
 
 
                 });
 
-            } else if (res.status == 405){
+            } else if (res.status == 405) {
                 this.setState({
                     errors: { message: "Unable to join again!" }
                 });
@@ -98,6 +98,10 @@ export default class GameRow extends React.Component {
     }
     render() {
         const product = this.props.game;
+        const myPlayerState = this.state.game.players.find(singlePlayerState => {
+            return singlePlayerState.user.userID === parseInt(localStorage.userID)
+        })
+
         const name = product.stocked ?
             product.name :
             <span style={{ color: 'red' }}>
@@ -109,13 +113,29 @@ export default class GameRow extends React.Component {
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.gameOwner.userName}</td>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.gameCode}</td>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.players.length}</td>
+                <td style={{ "borderWidth": "2px" }}>{this.props.game.playerOnTheMove?.userName}</td>
+
                 <td style={{ "borderWidth": "2px" }}>
-                    {this.props.game.gameOwner.email !== localStorage.email ?
-                        <Button color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleJoinGame()}>JOIN GAME</Button>
-                        :
+                    {this.state.game.gameOwner.email === localStorage.email &&
                         <Button color="secondary" variant="contained" id="buttonJoinGame" onClick={() => this.handleOpenGame()}>OPEN GAME</Button>
+                        // :
+                        // myPlayerState ?
+                        //     <Button color="secondary" variant="contained" id="buttonJoinGame" onClick={() => this.handleOpenGame()}>OPEN GAME</Button>
+                        //     :
+                        //     <Button color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleJoinGame()}>JOIN GAME</Button>
+                        
+                    }
+                    {this.state.game.gameOwner.email !== localStorage.email && myPlayerState &&
+                        <Button color="secondary" variant="contained" id="buttonJoinGame" onClick={() => this.handleOpenGame()}>OPEN GAME</Button>
+                            // :
+                            // <Button color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleJoinGame()}>JOIN GAME</Button>
 
                     }
+                    {this.state.game.gameOwner.email !== localStorage.email && myPlayerState == undefined && 
+                        <Button color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleJoinGame()}>JOIN GAME</Button>
+
+                    }
+
 
                 </td>
             </tr>

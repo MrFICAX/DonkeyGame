@@ -6,8 +6,6 @@ import React from "react";
 // import WaitingLobby from "./WaitingLobby";
 // import "./style/index.css";
 import Login from './Login'
-import SearchComponent from "./SearchComponent";
-
 import {
   BrowserRouter as Router,
   Routes,

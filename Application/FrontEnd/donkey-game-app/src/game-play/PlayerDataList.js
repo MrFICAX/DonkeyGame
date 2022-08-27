@@ -13,25 +13,32 @@ export default class PlayerDataList extends Component {
 
     }
     componentWillReceiveProps(nextProps) {
-        this.setState({ players: nextProps.players })
+        this.setState({ game: nextProps.game })
     }
 
     render() {
 
         return (
-            <div className="searchGame flexColumn">
+            <div className="searchGame flexPlayersColumn">
 
                 <h1>Game started:</h1>
                 <h2></h2>
                 <div className='playersListDiv'>
                     {
-                        this.state.game.players.filter(player => player.user.userID.toString() !== localStorage.userID).map((player) => {
+                        this.state.game.players.map((player, index) => {
                             // player.userID !== localStorage.userID &&
-                            return <PlayerDataView key={player.playerStateID} playerOnTheMove={this.state.game.playerOnTheMove} playerState={player} />
+                            if (player.user.userID !== parseInt(localStorage.userID)){
+                                return <PlayerDataView className={`order${index}`} key={player.playerStateID} playerOnTheMove={this.state.game.playerOnTheMove} playerState={player} />
+                            } else{
+                                return <MyDataView playerState={player} game={this.state.game} className={`order${this.state.game.players.findIndex(player => player.user.userID.toString() === localStorage.userID)}`} playerOnTheMove={this.state.game.playerOnTheMove} />
+                            }
                         })
                     }
 
-                    <MyDataView playerOnTheMove={this.state.game.playerOnTheMove} />
+                    {/* <MyDataView className={`order${this.state.game.players.findIndex(player => player.user.userID.toString() === localStorage.userID)}`} playerOnTheMove={this.state.game.playerOnTheMove} /> */}
+                
+                    {/* <MyDataView className={`order0`} playerOnTheMove={this.state.game.playerOnTheMove} /> */}
+
                 </div>
             </div>
         );

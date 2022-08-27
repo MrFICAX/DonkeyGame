@@ -44,6 +44,8 @@ export default class GamesTable extends React.Component {
                             <th>GameOwner</th>
                             <th>GameCode</th>
                             <th>Players count</th>
+                            <th>Player on the move</th>
+
                             <th></th>
                         </tr>
                     </thead>

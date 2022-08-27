@@ -10,10 +10,14 @@ const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
     // var numOfCards = 4;
     // if (playerOnTheMove.userName === playerState.user.userName)
     //     this.numOfCards = 5;
+    var playerOnTheMoveDiv = ""
+    if (playerOnTheMove.userName === playerState.user.userName)
+        playerOnTheMoveDiv = "playerOnTheMoveViewDiv"
+
     return (
 
 
-        <div className='profileViewDiv p-1 m-3'>
+        <div className={`playerDataViewDiv ${playerOnTheMoveDiv}`}>
             <img src={profile} width="200" height="100" />
             <div >
                 <h4>{playerState.user.userName}</h4>
@@ -23,10 +27,10 @@ const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
             </div>
 
             {playerOnTheMove.userName === playerState.user.userName &&
-                <BlankCardsList cardsNumber={5} ></BlankCardsList>
+                <BlankCardsList cardsNumber={5} hasSpecialCard={playerState.hasSpecialCard} ></BlankCardsList>
             }
             {playerOnTheMove.userName !== playerState.user.userName &&
-                <BlankCardsList cardsNumber={4} ></BlankCardsList>
+                <BlankCardsList cardsNumber={4} hasSpecialCard={playerState.hasSpecialCard}></BlankCardsList>
             }
         </div>
 

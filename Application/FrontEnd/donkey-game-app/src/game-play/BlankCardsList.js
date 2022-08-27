@@ -10,11 +10,25 @@ export default class BlankCardsList extends Component {
 
         this.state = {
             cardsNumber: this.props.cardsNumber,
+            hasSpecialCard: this.props.hasSpecialCard,
             cardImages: [],
-            image: {}
+            image: {},
+            selectedCard: {
+                name: "",
+                value: ""
+            }
         }
 
+
+
     }
+
+    componentDidMount(){
+        if (this.state.hasSpecialCard === true) {
+            this.setState((prevState) => ({ cardsNumber: prevState.cardsNumber - 1 }))
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         this.setState({ cards: nextProps.cards })
     }
@@ -22,12 +36,16 @@ export default class BlankCardsList extends Component {
     render() {
 
         return (
-            <div className="flexRow">
+            <div className="cardsRow">
                 <br />
-                <div className='lobbyDiv'>
+                <div className='cardsDiv'>
                     {Array.apply(0, Array(this.state.cardsNumber)).map(function (x, i) {
-                        return <SingleCard key={i} card={{}}/>;
+                        return <SingleCard key={i} card={{}} selectedCard={{ name: "", value: "" }} handleClick={() => { }} />;
                     })}
+                    {this.state.hasSpecialCard &&
+                        <SingleCard key={-1} card={{ cardID: -1, value: 2, name: "CLUB" }} selectedCard={{ name: "", value: "" }} handleClick={() => { }} />
+
+                    }
                 </div>
 
                 {/* <div className='flexRow'>

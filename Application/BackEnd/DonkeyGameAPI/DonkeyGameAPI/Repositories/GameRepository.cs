@@ -36,6 +36,12 @@ namespace DonkeyGameAPI.Repositories
 
         }
 
+        public IEnumerable<Game> GetAllGamesNotStartedOrWithMe(int userID)
+        {
+            return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.DateOfStart == null || game.Players.Any(state => state.User.UserID == userID)).ToList();
+
+        }
+
         public Game GetGameWithPlayerStatesAndUserData(int gameID)
         {
             return _context.Games.Include(g => g.GameOwner).Include(g => g.Players).ThenInclude(state => state.User).Where(game => game.GameID == gameID).SingleOrDefault();

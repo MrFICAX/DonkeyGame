@@ -337,7 +337,8 @@ export default class StartPageContainer extends Component {
                     <label>{localStorage.lobbyID}</label>
                 </div>
                 <div>
-                    <ChatOverall gameCode={"startPage"} />
+                    <ChatOverall gameCode={"startPage"} getMyCards = {() =>{}} game={ { gameCode: "mockGame"} } />
+
                 </div>
 
                 {/* <div className='chat'>

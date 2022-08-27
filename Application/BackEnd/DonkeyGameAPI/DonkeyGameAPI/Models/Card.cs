@@ -47,6 +47,11 @@ namespace DonkeyGameAPI.Models
             return new Card(2, "CLUB");
         }
 
+        public bool isSpecialCard()
+        {
+            return this.Value == 2; 
+        }
+
         public Card WithoutID()
         {
             this.CardID = 0;

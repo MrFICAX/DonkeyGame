@@ -9,7 +9,7 @@ export default class SearchComponent extends React.Component {
 
         this.state = {
             errors: {},
-            games : JSON.parse(localStorage.games)
+            games: localStorage.games ? JSON.parse(localStorage.games) : []
         };
 
 
@@ -49,7 +49,7 @@ export default class SearchComponent extends React.Component {
 
     async getAllGamesNotStarted() {
         
-        await fetch("https://localhost:5225/Game/GetAllGamesNotStarted", {
+        await fetch("https://localhost:5225/Game/GetAllGamesNotStartedOrWithMe/" + localStorage.userID, { //GetAllGamesNotStartedOrWithMe/" + localStorage.userID, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -61,6 +61,8 @@ export default class SearchComponent extends React.Component {
                 res.json().then(games => {
                     // alert("Games downloaded!");
                     console.log(games);
+                    localStorage.games = JSON.stringify(games)
+
                     this.setState((state) => {
                         return { games: games };
                     });

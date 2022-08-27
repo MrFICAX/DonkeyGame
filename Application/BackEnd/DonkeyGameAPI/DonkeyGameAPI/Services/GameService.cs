@@ -193,10 +193,74 @@ namespace DonkeyGameAPI.Services
             return false;
         }
 
-        public async Task<Game?> PassACard(int gameID, int playerfromID, int playertoID, int cardID)
+        public async Task<Game?> PassACard(int gameID, int playerfromID, int cardID)
         {
 
-            var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.GameID == gameID);
+            //var game = unitOfWork.GameRepository.GetInclude("Players.Cards").SingleOrDefault(g => g.GameID == gameID);
+            //var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+            //var cardToPass = await unitOfWork.CardRepository.GetOne(cardID);
+
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+            if (game == null) return null;
+            var playerStateFrom = game.Players.Find(p => p.User.UserID == playerfromID);
+
+            var playerFrom = await unitOfWork.PlayerStateRepository.GetOne(playerStateFrom.PlayerStateID);
+            var playerStateFromIdx = game.Players.FindIndex(p => p.User.UserID == playerfromID);
+
+            var playerStateTo = game.Players[(playerStateFromIdx + 1) % game.Players.Count];
+
+            var playerTo = await unitOfWork.PlayerStateRepository.GetOne(playerStateTo.PlayerStateID);
+            var cardToPass = await unitOfWork.CardRepository.GetOne(cardID);
+            if (playerFrom == null && playerTo == null) return null;
+
+            if (playerFrom.HasSpecialCard)
+            {
+                playerFrom.TurnsPassedWithSpecialCard++;
+            }
+            if (playerFrom.HasSpecialCard && playerFrom.TurnsPassedWithSpecialCard == 3)
+            {
+                playerFrom.TurnsPassedWithSpecialCard = 0;
+            }
+
+            if (cardToPass.isSpecialCard())
+            {
+                playerTo.HasSpecialCard = true;
+                playerTo.TurnsPassedWithSpecialCard = 0;
+                playerFrom.HasSpecialCard = false;
+                playerFrom.TurnsPassedWithSpecialCard = 0;
+            }
+            playerTo.Cards.Add(cardToPass);
+            playerFrom.Cards.Remove(cardToPass);
+
+            game.PlayerOnTheMove = playerTo.User;
+            unitOfWork.GameRepository.Update(game);
+            unitOfWork.PlayerStateRepository.Update(playerTo);
+            unitOfWork.PlayerStateRepository.Update(playerFrom);
+
+            await unitOfWork.CompleteAsync();
+
+            game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+            return game;
+            //if (game == null || cardToPass == null) return null;
+
+
+            //var playerStateFrom = game.Players.Find(p => p.User.UserID == playerfromID);
+            //var playerStateFromIdx = game.Players.FindIndex(p => p.User.UserID == playerfromID);
+            //var playerStateTo = game.Players[(playerStateFromIdx + 1) % game.Players.Count];
+
+            //cardToPass.
+
+            ////Card card = playerStateFrom.Cards.Find(card => card.CardID == cardID);
+            ////var cardIdx = playerStateFrom.Cards.FindIndex(card => card.CardID == cardID);
+            ////if (cardIdx != null)
+            ////{
+            ////    playerStateFrom.Cards.RemoveAt(cardIdx);
+            ////}
+
+            ////playerStateTo.Cards.Add()
+
+
+
 
 
 
@@ -213,8 +277,8 @@ namespace DonkeyGameAPI.Services
             playerFrom.Cards.Remove(cardToPass);
             unitOfWork.CompleteAsync();
                        */
-            return null;
         }
+
         public IEnumerable<Game> GetAllGamesNotStarted()
         {
             IEnumerable<Game> list = unitOfWork.GameRepository.GetAllGamesNotStarted();//.GetIncludes(g => g.GameOwner, g => g.Players/*, g => g.PlayerOnTheMove*/).Where(g => g.DateOfStart == null).ToList();
@@ -245,6 +309,20 @@ namespace DonkeyGameAPI.Services
             }
 
             return null;
+        }
+
+        public IEnumerable<Game> GetAllGamesNotStartedOrWithMe(int userID)
+        {
+            IEnumerable<Game> list = unitOfWork.GameRepository.GetAllGamesNotStartedOrWithMe(userID);//.GetIncludes(g => g.GameOwner, g => g.Players/*, g => g.PlayerOnTheMove*/).Where(g => g.DateOfStart == null).ToList();
+
+
+            foreach (Game game in list)
+            {
+                game.GameOwner = game.GameOwner.WithoutPassword();
+                game.ClearPasswords();
+            }
+
+            return list;
         }
     }
 }
