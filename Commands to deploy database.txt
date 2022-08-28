@@ -1,0 +1,7 @@
+sqllocaldb create DonkeyGamedb
+
+sqllocaldb start DonkeyGamedb
+
+dotnet ef migrations add v1
+
+dotnet ef database update

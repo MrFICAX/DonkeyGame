@@ -17,6 +17,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import LayedUserView from "../../game-play/LayedUserView.js"
 
 const theme = createTheme({
     palette: {
@@ -165,16 +166,13 @@ export default class GameLobby extends React.Component {
             headers: {
                 "Content-Type": "application/json"
             }
-            //,body: JSON.stringify(msg)
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
-                    // localStorage.gameID = result;
-                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
+
                     localStorage.game = null;
                     localStorage.myCards = JSON.stringify({ myCards: [] });
                     window.location.href = "/startPage";
-
 
                 });
 
@@ -215,16 +213,6 @@ export default class GameLobby extends React.Component {
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
-                    // localStorage.gameID = result;
-                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-
-
-                    // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
-                    // this.setState(state => {
-                    //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
-                    //     console.log(tmp);
-                    //    return { game: tmp}
-                    // });
 
                 });
 
@@ -255,20 +243,10 @@ export default class GameLobby extends React.Component {
         }).then(res => {
             if (res.ok) {
                 res.json().then(async result => {
-                    // localStorage.gameID = result;
-                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-
-
-                    // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
-                    // this.setState(state => {
-                    //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
-                    //     console.log(tmp);
-                    //    return { game: tmp}
-                    // });
 
                 });
 
-            } else if (res.status == 405) {
+            } else if (res.status === 405) {
                 this.setState({
                     errors: { message: "Unable to start game!" }
                 });
@@ -285,8 +263,6 @@ export default class GameLobby extends React.Component {
                 console.log("Join game error: ", err);
             });
     }
-
-
 
     goBackToStartGamePage() {
         localStorage.game = null;
@@ -309,15 +285,12 @@ export default class GameLobby extends React.Component {
                     <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
                 }
 
-
-
                 <div className="searchGame gameLobbyDiv">
                     <h1>Game code: {this.state.game.gameCode}</h1>
                     <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
                     <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
                     {console.log(this.state.game.dateOfStart)}
                     <h2>Date of start: {this.state.game.dateOfStart ? Moment(this.state.game.dateOfStart).format('MMMM Do YYYY, h:mm:ss a') : "Game not started"}</h2>
-
 
                     {!this.state.game.dateOfStart &&
 
@@ -332,16 +305,20 @@ export default class GameLobby extends React.Component {
 
                     }
 
-                    {this.state.loserPlayer &&
+                    {this.state.game.loserPlayer &&
 
                         <Dialog open={true} /*onClose={handleToClose} */ >
                             <DialogTitle>{"GAME FINISHED"}</DialogTitle>
                             <DialogContent>
                                 <div className='lobbyDiv'>
                                     {
-                                        // layedUsersIds.map((playerState, index) => {
-                                        //     return <LayedUserView key={playerState.playerStateID} loserPlayer={loserPlayer} loserPlayerFound={loserPlayerFound} username={playerState.user.userName} email={playerState.user.email} />
-                                        // })
+                                        this.state.game.players.map((playerState, index) => {
+                                            var flag = false;
+                                            if (playerState.user.userID === this.state.game.loserPlayer.userID){
+                                                flag = true;
+                                            }
+                                            return <LayedUserView key={playerState.playerStateID} loserPlayer={this.state.game.players.find(state => state.user.userID === this.state.game.loserPlayer.userID)} loserPlayerFound={flag} username={playerState.user.userName} email={playerState.user.email} />
+                                        })
                                     }
                                 </div>
 
