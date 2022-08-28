@@ -10,6 +10,8 @@ const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
     // var numOfCards = 4;
     // if (playerOnTheMove.userName === playerState.user.userName)
     //     this.numOfCards = 5;
+    var donkey = "donkey"
+    var tmpDonkey = donkey.slice(0, playerState.points) + "_".repeat(donkey.length - playerState.points)
     var playerOnTheMoveDiv = ""
     if (playerOnTheMove.userName === playerState.user.userName)
         playerOnTheMoveDiv = "playerOnTheMoveViewDiv"
@@ -24,6 +26,8 @@ const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
             </div>
             <div >
                 {playerState.user.email}
+                <br></br>
+                <h2>Points: {tmpDonkey}</h2>
             </div>
 
             {playerOnTheMove.userName === playerState.user.userName &&

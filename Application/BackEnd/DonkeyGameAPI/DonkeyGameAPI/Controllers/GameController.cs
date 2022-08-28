@@ -159,6 +159,40 @@ namespace DonkeyGameAPI.Controllers
             return Ok(game);
         }
 
+        [Route("GivePointAndRefreshGame/{gameID}/{userLoserID}")]
+        [HttpGet]
+        public async Task<ActionResult> GivePointAndRefreshGame(int gameID, int userLoserID)
+        {
+            var game = await gameService.GivePointsAndRefreshGame(gameID, userLoserID);
+            if (game == null)
+                return StatusCode(405);
+
+            game.Players.ForEach(playerState => playerState.Cards = new List<Card>());
+
+            if (game.LoserPlayer != null)
+            {
+                await _chatHub.Clients.Group(game.GameCode).SendAsync("gameFinished", game);
+            }
+            else
+            {
+                await _chatHub.Clients.Group(game.GameCode).SendAsync("gameStarted", game);
+            }
+            //game.Players.ForEach(playerState =>
+            //{
+            //    MyCards myCards = new MyCards();
+            //    myCards.PlayerStateID = playerState.PlayerStateID;
+            //    myCards.gameCode = game.GameCode;
+            //    myCards.myCards = playerState.Cards;
+            //    _chatHub.Clients.Group(playerState.User.UserID.ToString()).SendAsync("myCards", myCards);
+
+            //});
+
+
+            return Ok(game);
+        }
+
+
+
         [Route("GetMyCards/{gameID}/{userID}")]
         [HttpGet]
         public async Task<ActionResult> GetMyCards(int gameID, int userID)

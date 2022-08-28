@@ -64,10 +64,10 @@ namespace DonkeyGameAPI.Services
             var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndUserData(gameID);
 
             //OVO OBAVEZNO OTKOMENTARISATI 
-            //if (game.Players.Count != 4)
-            //{
-            //    return null;
-            //}
+            if (game.Players.Count != 4)
+            {
+                return null;
+            }
 
             if (game == null) return null;
             game.DateOfStart = DateTime.Now;
@@ -123,6 +123,98 @@ namespace DonkeyGameAPI.Services
             game.ClearPasswords();
             return game;
         }
+
+        public async Task<Game?> GivePointsAndRefreshGame(int gameID, int userLoserID)
+        {
+            //            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.GameID == gameID);
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+
+            //OVO OBAVEZNO OTKOMENTARISATI 
+            //if (game.Players.Count != 4)
+            //{
+            //    return null;
+            //}
+
+            if (game == null) return null;
+
+            var player = game.Players.Find(p => p.User.UserID == userLoserID);
+            player.Points++;
+
+            if (player.Points == "Magarac".Length)
+            {
+                game.LoserPlayer = player.User;
+                unitOfWork.GameRepository.Update(game);
+                await unitOfWork.CompleteAsync();
+                game.ClearPasswords();
+
+                return game;
+
+            }
+
+            game.Players.ForEach(player =>
+            {
+                foreach (var card in player.Cards)
+                {
+                    unitOfWork.CardRepository.Delete(card);
+
+                }
+            });
+            await unitOfWork.CompleteAsync();
+
+            //game.DateOfStart = DateTime.Now;
+            int num = Random.Shared.Next(0, 3);
+            List<Card> delt = new();
+            List<Card> hand = new();
+            Card card = new(0, "");
+
+            Random rnd = new Random();
+            int randomIndexForSpecialCard = rnd.Next() % game.Players.Count;
+            int randomIndexForFiveCards = rnd.Next() % game.Players.Count;
+
+            delt.Add(card);
+            foreach (PlayerState playerState in game.Players)
+            {
+                int initialHandCount = 0;
+                playerState.Cards = new List<Card>();
+
+                if (game.Players.IndexOf(playerState) == randomIndexForSpecialCard)
+                {
+                    hand.Add(Card.SpecialCard());
+                    playerState.HasSpecialCard = true;
+                    initialHandCount = hand.Count;
+                }
+                for (int i = 0; i < 4 - initialHandCount; i++)
+                {
+                    do
+                    {
+                        card = Card.Deal().WithoutID();
+                    } while (delt.Contains(card) && delt.Count < 17);
+                    hand.Add(card);
+                    delt.Add(card);
+
+                }
+
+                if (game.Players.IndexOf(playerState) == randomIndexForFiveCards)
+                {
+                    do
+                    {
+                        card = Card.Deal().WithoutID();
+                    } while (delt.Contains(card) && delt.Count < 17);
+                    hand.Add(card);
+                    delt.Add(card);
+
+                    game.PlayerOnTheMove = playerState.User;
+                }
+
+                playerState.Cards.AddRange(hand);
+                hand.Clear();
+            }
+            unitOfWork.GameRepository.Update(game);
+            await unitOfWork.CompleteAsync();
+            game.ClearPasswords();
+            return game;
+        }
+
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -49,12 +49,14 @@ const ChatOverall = (props) => {
                 console.log(detail)
                 var playerstateid = detail.stateID.toString()
                 var gamecode = detail.gameCode
-                qwerty(playerstateid, gamecode)
+                LayDownHand(playerstateid, gamecode)
+            });
 
-                // if (connection !== undefined) {
-
-                //     connection.invoke("LayDownHand", { playerstateid, gamecode });
-                // }
+            window.addEventListener("getLayDownHands", function ({ detail }) {
+                console.log(detail)
+                var playerstateid = detail.stateID.toString()
+                var gamecode = detail.gameCode
+                getLayDownHands(playerstateid, gamecode)
             });
         }
     }, [connection])
@@ -71,8 +73,12 @@ const ChatOverall = (props) => {
 
     }
 
-    function qwerty(playerstateid, gamecode) {
+    function LayDownHand(playerstateid, gamecode) {
         connection.invoke("LayDownHand", { playerstateid, gamecode });
+    }
+
+    function getLayDownHands(playerstateid, gamecode) {
+        connection.invoke("GetLayDownHands", { playerstateid, gamecode });
     }
 
     const joinRoom = async (user, room) => {
@@ -173,9 +179,12 @@ const ChatOverall = (props) => {
                 localStorage.games = JSON.stringify(updatedGames);
                 window.dispatchEvent(new Event("storage"));
 
+                window.dispatchEvent(new Event("closeDialog"));
+
+
 
                 //---------------------------------------------------
-                if (game.gameOwner.userID == myId) {
+                if (game.gameOwner.userID === parseInt(myId)) {
                     var gameCode = game.gameCode
                     connection.invoke("ClearList", gameCode);
 
@@ -194,6 +203,55 @@ const ChatOverall = (props) => {
                     //alert("Group created for playerStateID: " + user);
 
                 });
+            })
+
+            connection.on("gameFinished", (game) => {
+                var myId = localStorage.userID;
+                //getMyCards(myId, game.gameID);
+
+                console.log(game);
+                const array = localStorage.games;
+                const parsedArray = array ? JSON.parse(array) : [];
+                console.log(parsedArray);
+
+                const singleGame = localStorage.game
+                const parsedGame = singleGame ? JSON.parse(singleGame) : [];
+                if (parsedGame?.gameCode === game.gameCode) {
+                    localStorage.game = JSON.stringify(game);
+                    window.dispatchEvent(new Event("storageGame")); //gameLobby
+                }
+
+                const updatedGames = parsedArray.map(singleGame => {
+                    // 👇️ if id equals 2, update country property
+                    if (singleGame.gameCode === game.gameCode) {
+                        return game;
+                    }
+                    return singleGame;
+                });
+                localStorage.games = JSON.stringify(updatedGames);
+                window.dispatchEvent(new Event("storage")); //search-games
+
+
+                //---------------------------------------------------
+                if (game.gameOwner.userID === parseInt(myId)) {
+                    var gameCode = game.gameCode
+                    connection.invoke("ClearList", gameCode);
+
+                    connection.on("ClearListFinished", () => {
+                        //alert("List of layed users cleared!");
+                    });
+                }
+
+                // var myPlayerState = game.players.find(singlePlayerState => {
+                //     return singlePlayerState.user.userID === parseInt(myId);
+                // });
+                // connection.invoke("CreateSingleGroup", myPlayerState.playerStateID.toString());
+
+                // connection.on("GroupCreated", (user, message) => {
+                //     //setMessages(messages => [...messages, { user, message }]);
+                //     //alert("Group created for playerStateID: " + user);
+
+                // });
             })
 
             connection.onclose(e => {

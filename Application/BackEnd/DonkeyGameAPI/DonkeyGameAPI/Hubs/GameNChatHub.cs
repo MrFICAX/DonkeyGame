@@ -12,14 +12,13 @@ namespace SignalRChat.Hubs
     {
         private readonly string _botUser;
         private readonly IDictionary<string, UserConnection> _connections;
-        private readonly IDictionary<string, List<string>> _layedUsers;
+        private static readonly IDictionary<string, List<string>> _layedUsers = new Dictionary<string, List<string>>();
 
 
         public GameNChatHub(IDictionary<string, UserConnection> connections)
         {
             _botUser = "MyChat Bot";
             _connections = connections;
-            _layedUsers = new Dictionary<string, List<string>>();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
@@ -52,11 +51,11 @@ namespace SignalRChat.Hubs
                 _layedUsers[gameCode].Clear();
             else
                 _layedUsers.Add(gameCode, new List<string>());
-                //await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
+            //await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
 
-                //_connections[Context.ConnectionId] = userConnection;
+            //_connections[Context.ConnectionId] = userConnection;
 
-                await Clients.Group(gameCode).SendAsync("ClearListFinished");
+            await Clients.Group(gameCode).SendAsync("ClearListFinished");
 
             //await SendUsersConnected(userConnection.Room);
         }
@@ -67,16 +66,37 @@ namespace SignalRChat.Hubs
             {
                 _layedUsers.Add(data.Gamecode, new List<string>());
             }
-            _layedUsers[data.Gamecode].Add(data.Playerstateid);
-            if (_layedUsers[data.Gamecode].Count == 4)
+            if (_layedUsers[data.Gamecode].Contains(data.Playerstateid))
             {
-                await Clients.Group(data.Gamecode).SendAsync("Loser found", data);
-
+                //await Clients.Group(data.Gamecode).SendAsync("updateLayedUsers", _layedUsers[data.Gamecode]);
             }
             else
             {
+                _layedUsers[data.Gamecode].Add(data.Playerstateid);
+                //if (_layedUsers[data.Gamecode].Count == 4)
+                //{
+                //    await Clients.Group(data.Gamecode).SendAsync("Loser found", data);
+                //}
+                //else
+                //{
                 await Clients.Group(data.Gamecode).SendAsync("updateLayedUsers", _layedUsers[data.Gamecode]);
+                //}
+            }
 
+        }
+
+        public async Task GetLayDownHands(GameCodePlayerState data)
+        {
+            if (_layedUsers.ContainsKey(data.Gamecode))
+            {
+                //if (_layedUsers[data.Gamecode].Count == 4)
+                //{
+                //    await Clients.Group(data.Gamecode).SendAsync("Loser found", data);
+                //}
+                //else
+                //{
+                await Clients.Group(data.Gamecode).SendAsync("updateLayedUsers", _layedUsers[data.Gamecode]);
+                //}
             }
 
         }

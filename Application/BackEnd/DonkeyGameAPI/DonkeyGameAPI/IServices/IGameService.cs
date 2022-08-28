@@ -18,6 +18,8 @@ namespace DonkeyGameAPI.IServices
         Task<Game?> RemovePlayer(int gameID, int userID);
         Task<bool> RemoveGame(int gameID);
         Task<Game?> StartGame(int gameID);
+        Task<Game?> GivePointsAndRefreshGame(int gameID, int userLoserID);
+
         Task<Game> PassACard(int gameID, int playerfromID, int cardID);
         Task<MyCards?> GetMyCards(int gameID, int userID);
     }

@@ -16,6 +16,14 @@ h2 {
   margin-bottom: 1%;
 }
 
+.layedProfileViewDiv {
+  background-color: rgb(122, 150, 67);
+  border-radius: 30px;
+  align-items: center;
+  text-align: center;
+
+}
+
 .playerDataViewDiv {
   background-color: rgb(122, 150, 67);
   width: 46%;
@@ -26,6 +34,11 @@ h2 {
 .playerOnTheMoveViewDiv {
   background-color: rgb(255, 255, 255);
   border: 2px solid gold;
+}
+
+.loserPlayerViewDiv {
+  background-color: rgb(206, 0, 0);
+  border: 2px solid rgb(30, 0, 32);
 }
 
 .CardViewDiv {

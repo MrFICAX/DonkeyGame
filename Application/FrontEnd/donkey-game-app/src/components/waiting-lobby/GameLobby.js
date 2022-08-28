@@ -11,6 +11,12 @@ import ChatOverall from '../../ChatOverall';
 import PlayerList from './player-list';
 import { Button } from '@material-ui/core';
 import PlayerDataList from '../../game-play/PlayerDataList';
+import Moment from 'moment';
+import Dialog from "@material-ui/core/Dialog";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
 
 const theme = createTheme({
     palette: {
@@ -43,12 +49,11 @@ export default class GameLobby extends React.Component {
         this.setConnection = this.setConnection.bind(this);
     }
 
-    setConnection(connection){
-        this.setState({connection: connection});
+    setConnection(connection) {
+        this.setState({ connection: connection });
     }
 
     componentDidMount() {
-        //this.connectGameListener();
 
         this.connectChat();
         window.addEventListener("storageGame", () => {
@@ -108,276 +113,259 @@ export default class GameLobby extends React.Component {
 
     }
 
-connectChat = async () => {
-    try {
-        this.connection = new HubConnectionBuilder()
-            .withUrl("https://localhost:44382/chat")
-            .configureLogging(LogLevel.Information)
-            .build();
+    connectChat = async () => {
+        try {
+            this.connection = new HubConnectionBuilder()
+                .withUrl("https://localhost:44382/chat")
+                .configureLogging(LogLevel.Information)
+                .build();
 
-        this.connection.on("ReceiveMessage", (user, message) => {
-            this.setState((state, props) => ({
-                messages: [...this.state.messages, { user, message }]
-            }))    //setMessages(messages => [...messages, { user, message }]);
-        });
+            this.connection.on("ReceiveMessage", (user, message) => {
+                this.setState((state, props) => ({
+                    messages: [...this.state.messages, { user, message }]
+                }))    //setMessages(messages => [...messages, { user, message }]);
+            });
 
-        this.connection.on("UsersInRoom", (users) => {
+            this.connection.on("UsersInRoom", (users) => {
+                this.setState({
+                    users: users
+                })//setUsers(users);
+            });
+
+            this.connection.onclose(e => {
+                this.setState({
+                    connection: "",
+                    messages: [],
+                    users: []
+                })
+                // setConnection();
+                // setMessages([]);
+                // setUsers([]);
+            });
+
+            this.connection.start();
+            var user = localStorage.username
+            var room = this.state.game.gameCode
+            await this.connection.invoke("JoinRoom", { user, room });
+            //setConnection(connection);
             this.setState({
-                users: users
-            })//setUsers(users);
-        });
-
-        this.connection.onclose(e => {
-            this.setState({
-                connection: "",
-                messages: [],
-                users: []
+                connection: this.connection
             })
-            // setConnection();
-            // setMessages([]);
-            // setUsers([]);
-        });
-
-        this.connection.start();
-        var user = localStorage.username
-        var room = this.state.game.gameCode
-        await this.connection.invoke("JoinRoom", { user, room });
-        //setConnection(connection);
-        this.setState({
-            connection: this.connection
-        })
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-connectGameListener = async () => {
-    try {
-        this.gameConnection = new HubConnectionBuilder()
-            .withUrl("https://localhost:44382/game")
-            // , 
-            // {
-            //     skipNegotiation: true,
-            //     transport: HttpTransportType.WebSockets
-            // })
-            .configureLogging(LogLevel.Information)
-            .build();
-
-        // this.gameConnection.on("ReceiveMessage", (user, message) => {
-        //     this.setState((state, props) => ({
-        //         messages: [...this.state.messages, { user, message }]
-        //     }))    //setMessages(messages => [...messages, { user, message }]);
-        // });
-
-        // this.gameConnection.on("UsersInRoom", (users) => {
-        //     this.setState({
-        //         users: users
-        //     })//setUsers(users);
-        // });
-
-        this.gameConnection.onclose(e => {
-            this.setState({
-                gameConnection: ""
-            })
-            // setConnection();
-            // setMessages([]);
-            // setUsers([]);
-        });
-
-        this.gameConnection.start();
-        var user = localStorage.username
-        var room = this.state.game.gameCode
-        //await this.connection.invoke("JoinGroup", { user, room });
-
-        //setConnection(connection);
-
-        this.setState({
-            gameConnection: this.gameConnection
-        })
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-removePlayerFromGame() {
-    console.log(this.state);
-    var gameID = this.state.game.gameID
-
-    fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userID, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
+        } catch (e) {
+            console.log(e);
         }
-        //,body: JSON.stringify(msg)
-    }).then(res => {
-        if (res.ok) {
-            res.json().then(async result => {
-                // localStorage.gameID = result;
-                // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-                localStorage.game = null;
-                localStorage.myCards = JSON.stringify({ myCards: [] });
+    }
+
+    removePlayerFromGame() {
+        console.log(this.state);
+        var gameID = this.state.game.gameID
+
+        fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userID, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            }
+            //,body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    // localStorage.gameID = result;
+                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
+                    localStorage.game = null;
+                    localStorage.myCards = JSON.stringify({ myCards: [] });
+                    window.location.href = "/startPage";
+
+
+                });
+
+            } else if (res.status == 405) {
+                this.setState({
+                    errors: { message: "Unable to join again!" }
+                });
                 window.location.href = "/startPage";
+                localStorage.myCards = JSON.stringify({ myCards: [] });
 
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
+                window.location.href = "/startPage";
+                localStorage.myCards = JSON.stringify({ myCards: [] });
 
-            });
-
-        } else if (res.status == 405) {
-            this.setState({
-                errors: { message: "Unable to join again!" }
-            });
-            window.location.href = "/startPage";
-            localStorage.myCards = JSON.stringify({ myCards: [] });
-
-        } else {
-            this.setState({
-                errors: { message: res.message }
-            });
-            window.location.href = "/startPage";
-            localStorage.myCards = JSON.stringify({ myCards: [] });
-
-        }
-    })
-        .catch(err => {
-            console.log("Join game error: ", err);
-            window.location.href = "/startPage";
-            localStorage.myCards = JSON.stringify({ myCards: [] });
-
-        });
-}
-
-removeOtherPlayerFromGame() {
-    console.log(this.state);
-    var gameID = this.state.game.gameID
-
-    fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userIDtoRemove, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        }
-        //,body: JSON.stringify(msg)
-    }).then(res => {
-        if (res.ok) {
-            res.json().then(async result => {
-                // localStorage.gameID = result;
-                // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-
-
-                // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
-                // this.setState(state => {
-                //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
-                //     console.log(tmp);
-                //    return { game: tmp}
-                // });
-
-            });
-
-        } else if (res.status == 405) {
-            this.setState({
-                errors: { message: "Unable to join again!" }
-            });
-        } else {
-            this.setState({
-                errors: { message: res.message }
-            });
-        }
-    })
-        .catch(err => {
-            console.log("Join game error: ", err);
-        });
-}
-
-handleStartGame() {
-    var gameID = this.state.game.gameID
-
-    fetch("https://localhost:5225/Game/StartGame/" + gameID, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
-        //,body: JSON.stringify(msg)
-    }).then(res => {
-        if (res.ok) {
-            res.json().then(async result => {
-                // localStorage.gameID = result;
-                // await this.sendCreateGameMessage(localStorage.lobbyID, result);
-
-
-                // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
-                // this.setState(state => {
-                //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
-                //     console.log(tmp);
-                //    return { game: tmp}
-                // });
-
-            });
-
-        } else if (res.status == 405) {
-            this.setState({
-                errors: { message: "Unable to start game!" }
-            });
-            console.log("Unable to start game!")
-            alert("No enough players in game!")
-        } else {
-            this.setState({
-                errors: { message: res.message }
-            });
-            console.log("Route not found! Error code: " + res.status)
-        }
-    })
-        .catch(err => {
-            console.log("Join game error: ", err);
-        });
-}
-
-
-
-goBackToStartGamePage() {
-    localStorage.game = null;
-    window.location.href = "/startPage";
-    localStorage.myCards = JSON.stringify({ myCards: [] });
-}
-
-render() {
-    return (
-        <div>
-            {this.state.game.gameOwner.email === localStorage.email &&
-                <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
-                // :
-                // <Header logoutHandle={this.removePlayerFromGame} buttonVisible={true} buttonText={"DISCONNECT FROM GAME"} ></Header>
             }
-            {this.state.game.gameOwner.email !== localStorage.email && this.state.game.dateOfStart == null  &&
-                <Header logoutHandle={this.removePlayerFromGame} buttonVisible={true} buttonText={"DISCONNECT FROM GAME"} ></Header>
+        })
+            .catch(err => {
+                console.log("Join game error: ", err);
+                window.location.href = "/startPage";
+                localStorage.myCards = JSON.stringify({ myCards: [] });
+
+            });
+    }
+
+    removeOtherPlayerFromGame() {
+        console.log(this.state);
+        var gameID = this.state.game.gameID
+
+        fetch("https://localhost:5225/Game/RemovePlayer/" + gameID + "/" + localStorage.userIDtoRemove, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
             }
-            {this.state.game.gameOwner.email !== localStorage.email && this.state.game.dateOfStart != null &&
-                <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
+            //,body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    // localStorage.gameID = result;
+                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
+
+
+                    // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
+                    // this.setState(state => {
+                    //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
+                    //     console.log(tmp);
+                    //    return { game: tmp}
+                    // });
+
+                });
+
+            } else if (res.status == 405) {
+                this.setState({
+                    errors: { message: "Unable to join again!" }
+                });
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
             }
+        })
+            .catch(err => {
+                console.log("Join game error: ", err);
+            });
+    }
+
+    handleStartGame() {
+        var gameID = this.state.game.gameID
+
+        fetch("https://localhost:5225/Game/StartGame/" + gameID, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+            //,body: JSON.stringify(msg)
+        }).then(res => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    // localStorage.gameID = result;
+                    // await this.sendCreateGameMessage(localStorage.lobbyID, result);
+
+
+                    // var userIDtoRemove = parseInt(localStorage.userIDtoRemove)
+                    // this.setState(state => {
+                    //     var tmp = state.game.players.filter(playerState => playerState.user.userID !== userIDtoRemove)
+                    //     console.log(tmp);
+                    //    return { game: tmp}
+                    // });
+
+                });
+
+            } else if (res.status == 405) {
+                this.setState({
+                    errors: { message: "Unable to start game!" }
+                });
+                console.log("Unable to start game!")
+                alert("No enough players in game!")
+            } else {
+                this.setState({
+                    errors: { message: res.message }
+                });
+                console.log("Route not found! Error code: " + res.status)
+            }
+        })
+            .catch(err => {
+                console.log("Join game error: ", err);
+            });
+    }
 
 
 
-            <div className="searchGame gameLobbyDiv">
-                <h1>Game code: {this.state.game.gameCode}</h1>
-                <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
-                <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
+    goBackToStartGamePage() {
+        localStorage.game = null;
+        window.location.href = "/startPage";
+        localStorage.myCards = JSON.stringify({ myCards: [] });
+    }
 
-                {!this.state.game.dateOfStart &&
-
-                    <PlayerList players={this.state.game.players} removePlayerHandle={this.removeOtherPlayerFromGame} />
-                }
-                {!this.state.game.dateOfStart && this.state.game.gameOwner.email === localStorage.email &&
-                    <Button className="dugme" color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleStartGame()}>START GAME</Button>
-                }
-
-                {this.state.game.dateOfStart &&
-                    <PlayerDataList game={this.state.game} connection={this.state.connection} />
-
-                }
-
-
-            </div>
+    render() {
+        return (
             <div>
-                <ChatOverall getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} setConnection={this.setConnection} game={this.state.game}/>
+                {this.state.game.gameOwner.email === localStorage.email &&
+                    <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
+                    // :
+                    // <Header logoutHandle={this.removePlayerFromGame} buttonVisible={true} buttonText={"DISCONNECT FROM GAME"} ></Header>
+                }
+                {this.state.game.gameOwner.email !== localStorage.email && this.state.game.dateOfStart == null &&
+                    <Header logoutHandle={this.removePlayerFromGame} buttonVisible={true} buttonText={"DISCONNECT FROM GAME"} ></Header>
+                }
+                {this.state.game.gameOwner.email !== localStorage.email && this.state.game.dateOfStart != null &&
+                    <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
+                }
+
+
+
+                <div className="searchGame gameLobbyDiv">
+                    <h1>Game code: {this.state.game.gameCode}</h1>
+                    <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
+                    <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
+                    {console.log(this.state.game.dateOfStart)}
+                    <h2>Date of start: {this.state.game.dateOfStart ? Moment(this.state.game.dateOfStart).format('MMMM Do YYYY, h:mm:ss a') : "Game not started"}</h2>
+
+
+                    {!this.state.game.dateOfStart &&
+
+                        <PlayerList players={this.state.game.players} removePlayerHandle={this.removeOtherPlayerFromGame} />
+                    }
+                    {!this.state.game.dateOfStart && this.state.game.gameOwner.email === localStorage.email &&
+                        <Button className="dugme" color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleStartGame()}>START GAME</Button>
+                    }
+
+                    {this.state.game.dateOfStart &&
+                        <PlayerDataList game={this.state.game} connection={this.state.connection} />
+
+                    }
+
+                    {this.state.loserPlayer &&
+
+                        <Dialog open={true} /*onClose={handleToClose} */ >
+                            <DialogTitle>{"GAME FINISHED"}</DialogTitle>
+                            <DialogContent>
+                                <div className='lobbyDiv'>
+                                    {
+                                        // layedUsersIds.map((playerState, index) => {
+                                        //     return <LayedUserView key={playerState.playerStateID} loserPlayer={loserPlayer} loserPlayerFound={loserPlayerFound} username={playerState.user.userName} email={playerState.user.email} />
+                                        // })
+                                    }
+                                </div>
+
+
+                                <DialogContentText>
+                                    Go back to start page...
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+
+                                <Button onClick={this.goBackToStartGamePage} variant="contained"
+                                    color="primary">
+                                    GO BACK TO START PAGE
+                                </Button>
+
+                            </DialogActions>
+                        </Dialog>
+                    }
+
+                </div>
+                <div>
+                    <ChatOverall getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} setConnection={this.setConnection} game={this.state.game} />
+                </div>
             </div>
-        </div>
-    );
-}
+        );
+    }
 }
