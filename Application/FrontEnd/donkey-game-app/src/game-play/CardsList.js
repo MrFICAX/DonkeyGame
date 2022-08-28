@@ -15,6 +15,7 @@ export default class CardsList extends Component {
             turnsPassedWithSpecialCard: this.props.playerState.turnsPassedWithSpecialCard,
             playerOnTheMove: this.props.playerOnTheMove,
             loggedUsername: this.props.loggedUsername,
+            sameNameOfAllCards: this.props.sameNameOfAllCards,
             cardImages: [],
             loggedUserID: localStorage.userID,
             image: {},
@@ -32,7 +33,7 @@ export default class CardsList extends Component {
         this.setState({ game: nextProps.game })
         this.setState({ playerOnTheMove: nextProps.game.playerOnTheMove})
         this.setState({ turnsPassedWithSpecialCard: nextProps.playerState.turnsPassedWithSpecialCard})
-
+        this.setState({ sameNameOfAllCards: nextProps.sameNameOfAllCards })
     }
 
     passACardToNextPlayer(card) {
@@ -95,6 +96,10 @@ export default class CardsList extends Component {
         }
     }
 
+    handleLayDownHand() {
+        this.props.layDownHand();
+    }
+
     render() {
 
         return (
@@ -114,6 +119,9 @@ export default class CardsList extends Component {
                 {this.state.playerOnTheMove.userName == this.state.loggedUsername &&
                     <Button className="passACardButton" disabled={!this.state.btnClickable} color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handlePassSelectedCard()}>PASS SELECTED CARD</Button>
                 }
+
+                <Button className="passACardButton" /*disabled={!this.state.sameNameOfAllCards}*/ color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleLayDownHand()}>LAY DOWN HAND </Button>
+
 
                 {/* <div className='flexRow'>
                     {this.state.cards.myCards.map((card, index) => {

@@ -7,16 +7,33 @@ import Button from '@material-ui/core/Button';
 import { useEffect } from 'react';
 
 const ChatOverall = (props) => {
-    const [connection, setConnection] = useState();
+    const [connection, setConnection] = useState(undefined);
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [isDisabled, setDisabled] = useState(false);
     const [chatName, setChatName] = useState(props.gameCode);
     const [game, setGame] = useState(props.game);
 
+
+
     useEffect(() => {
 
         startConnection()
+        // window.addEventListener("layDownFired", function ({ detail }) {
+        //     console.log(detail)
+        //     var playerstateid = detail.stateID.toString()
+        //     var gamecode = detail.gameCode
+        //     qwerty(playerstateid, gamecode )
+
+        //     // if (connection !== undefined) {
+
+        //     //     connection.invoke("LayDownHand", { playerstateid, gamecode });
+        //     // }
+        // });
+
+        // window.addEventListener("qwerty", () => {
+        //     console.log("qwerty");
+        // })
         return () => {
             this.closeConnection()
         }
@@ -28,6 +45,17 @@ const ChatOverall = (props) => {
             if (game.gameCode !== "mockGame") {
                 CreateSingleGroupForUser()
             }
+            window.addEventListener("layDownFired", function ({ detail }) {
+                console.log(detail)
+                var playerstateid = detail.stateID.toString()
+                var gamecode = detail.gameCode
+                qwerty(playerstateid, gamecode)
+
+                // if (connection !== undefined) {
+
+                //     connection.invoke("LayDownHand", { playerstateid, gamecode });
+                // }
+            });
         }
     }, [connection])
 
@@ -41,6 +69,10 @@ const ChatOverall = (props) => {
             props.getMyCards();
         }
 
+    }
+
+    function qwerty(playerstateid, gamecode) {
+        connection.invoke("LayDownHand", { playerstateid, gamecode });
     }
 
     const joinRoom = async (user, room) => {
@@ -81,6 +113,16 @@ const ChatOverall = (props) => {
                 //console.log(myCards);
                 localStorage.myCards = JSON.stringify(myCards);
                 window.dispatchEvent(new Event("myCards"));
+            })
+
+            connection.on("updateLayedUsers", (userIDs) => {
+                // console.log("STAMPAM MOJE KARTE:")
+
+                //localStorage.myCards = null;
+                //alert("Cards downloaded via hub!")
+                //console.log(myCards);
+                localStorage.layedUsers = JSON.stringify(userIDs);
+                window.dispatchEvent(new Event("userIDsDownloaded"));
             })
 
             connection.on("updateGame", (game) => {
@@ -152,10 +194,7 @@ const ChatOverall = (props) => {
                     //alert("Group created for playerStateID: " + user);
 
                 });
-
             })
-
-
 
             connection.onclose(e => {
                 setConnection(undefined);
@@ -167,6 +206,10 @@ const ChatOverall = (props) => {
             await connection.invoke("JoinRoom", { user, room });
             console.log(connection)
             setConnection(connection);
+
+            props.setConnection(connection)
+            localStorage.connection = JSON.stringify(connection)
+            window.dispatchEvent(new Event("connectionSet"));
             setDisabled(true);
 
         } catch (e) {

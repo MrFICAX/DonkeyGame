@@ -40,6 +40,11 @@ export default class GameLobby extends React.Component {
         this.handleStartGame = this.handleStartGame.bind(this);
         this.removeOtherPlayerFromGame = this.removeOtherPlayerFromGame.bind(this);
         this.getMyCards = this.getMyCards.bind(this);
+        this.setConnection = this.setConnection.bind(this);
+    }
+
+    setConnection(connection){
+        this.setState({connection: connection});
     }
 
     componentDidMount() {
@@ -363,14 +368,14 @@ render() {
                 }
 
                 {this.state.game.dateOfStart &&
-                    <PlayerDataList game={this.state.game} />
+                    <PlayerDataList game={this.state.game} connection={this.state.connection} />
 
                 }
 
 
             </div>
             <div>
-                <ChatOverall getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} game={this.state.game}/>
+                <ChatOverall getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} setConnection={this.setConnection} game={this.state.game}/>
             </div>
         </div>
     );

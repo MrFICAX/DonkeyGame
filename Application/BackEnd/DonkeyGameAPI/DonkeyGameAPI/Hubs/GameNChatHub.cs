@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ChatService;
 using System.Linq;
 using System;
+using DonkeyGameAPI.DTOs;
 
 namespace SignalRChat.Hubs
 {
@@ -58,6 +59,26 @@ namespace SignalRChat.Hubs
                 await Clients.Group(gameCode).SendAsync("ClearListFinished");
 
             //await SendUsersConnected(userConnection.Room);
+        }
+
+        public async Task LayDownHand(GameCodePlayerState data)
+        {
+            if (!_layedUsers.ContainsKey(data.Gamecode))
+            {
+                _layedUsers.Add(data.Gamecode, new List<string>());
+            }
+            _layedUsers[data.Gamecode].Add(data.Playerstateid);
+            if (_layedUsers[data.Gamecode].Count == 4)
+            {
+                await Clients.Group(data.Gamecode).SendAsync("Loser found", data);
+
+            }
+            else
+            {
+                await Clients.Group(data.Gamecode).SendAsync("updateLayedUsers", _layedUsers[data.Gamecode]);
+
+            }
+
         }
 
         public async Task CreateSingleGroup(string playerStateID)
