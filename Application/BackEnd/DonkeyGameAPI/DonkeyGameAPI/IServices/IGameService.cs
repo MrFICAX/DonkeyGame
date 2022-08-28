@@ -21,6 +21,9 @@ namespace DonkeyGameAPI.IServices
         Task<Game?> GivePointsAndRefreshGame(int gameID, int userLoserID);
 
         Task<Game> PassACard(int gameID, int playerfromID, int cardID);
+
+        Task<Game> SetLoserPlayer(int gameID, int userID);
+
         Task<MyCards?> GetMyCards(int gameID, int userID);
     }
 }

@@ -416,5 +416,23 @@ namespace DonkeyGameAPI.Services
 
             return list;
         }
+
+        public async Task<Game> SetLoserPlayer(int gameID, int userID)
+        {
+            var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
+
+            if (game == null)
+            {
+                return null;
+            }
+            var loserPlayerState = game.Players.Find(state => state.User.UserID == userID);
+            game.LoserPlayer = loserPlayerState.User;
+
+            unitOfWork.GameRepository.Update(game);
+            await unitOfWork.CompleteAsync();
+
+            return game;
+
+        }
     }
 }

@@ -236,5 +236,16 @@ namespace DonkeyGameAPI.Controllers
             return Ok(game);
         }
 
+        [Route("SetLoserPlayer/{gameID}/{userID}")]
+        [HttpGet]
+        public async Task<ActionResult> SetLoserPlayer(int gameID, int userID)
+        {
+            var game = await gameService.SetLoserPlayer(gameID, userID);
+            if (game == null)
+                return BadRequest("Didn't pass a card");
+
+            return Ok(game);
+        }
+
     }
 }
