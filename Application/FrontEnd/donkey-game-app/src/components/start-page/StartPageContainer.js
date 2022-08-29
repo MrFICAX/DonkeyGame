@@ -1,15 +1,8 @@
-import { React, useState, useEffect, Component } from 'react'
+import { React, Component } from 'react'
 import SearchComponent from "../search-games/search-games";
-import Button from '@material-ui/core/Button';
-import TextField from "@material-ui/core/TextField";
 import './StartPage.css'
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import logo from '../../donkeyGamelogo.svg';
-
-import GameList from "../../games-preview/GameList"
 import CreateGame from './CreateGame';
-import Chat from '../../chat/Chat';
-import ChatOverall from '../../ChatOverall';
+import GameNChatConnection from '../../GameNChatConnection';
 import Header from './Header.js';
 
 export default class StartPageContainer extends Component {
@@ -36,7 +29,6 @@ export default class StartPageContainer extends Component {
         }
         this.getGames();
         this.handleChange = this.handleChange.bind(this);
-        this.connectGameListener = this.connectGameListener.bind(this);
     };
 
     componentDidMount() {
@@ -54,58 +46,6 @@ export default class StartPageContainer extends Component {
         this.setState({
             game
         });
-    }
-
-    componentDidMount() {
-        //this.connectGameListener();
-    }
-
-    connectGameListener = async () => {
-        try {
-            this.gameConnection = new HubConnectionBuilder()
-                .withUrl("https://localhost:44382/game")
-                // , 
-                // {
-                //     skipNegotiation: true,
-                //     transport: HttpTransportType.WebSockets
-                // })
-                .configureLogging(LogLevel.Information)
-                .build();
-
-            this.gameConnection.on("ReceiveMessage", (user, message) => {
-                this.setState((state, props) => ({
-                    messages: [...this.state.messages, { user, message }]
-                }))    //setMessages(messages => [...messages, { user, message }]);
-            });
-
-            this.gameConnection.on("UsersInRoom", (users) => {
-                this.setState({
-                    users: users
-                })//setUsers(users);
-            });
-
-            this.gameConnection.onclose(e => {
-                this.setState({
-                    gameConnection: ""
-                })
-                // setConnection();
-                // setMessages([]);
-                // setUsers([]);
-            });
-
-            this.gameConnection.start();
-            var user = localStorage.username
-            var room = this.state.game.gameCode
-            //await this.connection.invoke("JoinGroup", { user, room });
-
-            //setConnection(connection);
-
-            this.setState({
-                gameConnection: this.gameConnection
-            })
-        } catch (e) {
-            console.log(e);
-        }
     }
 
     getGames() {
@@ -212,13 +152,6 @@ export default class StartPageContainer extends Component {
     //     }
     // }
 
-    componentDidMount() {
-        //this.startConnection()
-    }
-
-    componentWillUnmount() {
-        //this.closeConnection();
-    }
 
     // startConnection = async () => {
     //     try {
@@ -297,58 +230,18 @@ export default class StartPageContainer extends Component {
     }
     render() {
         return (
-            <div>
+            <div className=" gameLobbyDiv">
                 <Header logoutHandle={this.handleLogOut} buttonVisible={true} buttonText={"LOG OUT"} ></Header>
 
-                <div className="lobbyDiv">
-                    {/* <SearchComponent maps={localStorage.getItem("allMaps")} /> */}
+                <div className="searchNCreateDiv">
                     <SearchComponent />
-
-                    {/* <GameList games={localStorage.getItem("games")} /> */}
-                    {/* <div className="playersDiv">
-                                <label>Players:</label>
-                                <div>
-                                    <PlayerList players={players} togglePlayer={togglePlayer} />
-                                    </div>
-                                    <div className="clearPlayersDiv">
-                                    <button className="clearPlayersBtn" onClick={handleClearPlayers}>Clear Players</button>
-                                    <p>{players.filter(player => player.complete).length} players invited</p>
-                                </div>
-                            </div> */}
                     <div className="createGame">
-                        <CreateGame /*handleCreateGame={this.handleCreateGame}*/></CreateGame>
-                        {/* <form>
-                            <TextField className="textfield"
-                                type="input"
-                                name="pwconfirm"
-                                label="Input Game Code..."
-                                value={this.state.game.code}
-                                onChange={this.handleChange}
-                            />
-                            <br />
-                            <Button color="primary" variant="contained"
-                                className="signUpSubmit"
-                                primary={true.toString()}
-                                type="submit"
-                                label="Create Game"
-                            >Create Game</Button>
-                        </form> */}
+                        <CreateGame />
                     </div>
-                    <label>{localStorage.lobbyID}</label>
                 </div>
                 <div>
-                    <ChatOverall gameCode={"startPage"} getMyCards = {() =>{}} game={ { gameCode: "mockGame"} } />
-
+                    <GameNChatConnection gameCode={"start page"} getMyCards = {() =>{}} game={ { gameCode: "mockGame"} } />
                 </div>
-
-                {/* <div className='chat'>
-                    {this.connection
-                        ?
-                        <Chat sendMessage={this.sendMessage} messages={this.messages} users={this.users} closeConnection={this.closeConnection} />
-                        :
-                        <div></div>
-                    }
-                </div> */}
             </div>
         );
     }

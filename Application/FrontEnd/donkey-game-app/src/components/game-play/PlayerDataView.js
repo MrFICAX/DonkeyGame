@@ -1,7 +1,5 @@
-import profile from '../../src/profile.svg';
-import Button from '@material-ui/core/Button';
-import logo from '../card-photos/back_of_card.png';
-import BlankCardsList from './BlankCardsList'
+import profile from '../../../src/profile.svg';
+import BlankCardsList from './BlankCardsList.js'
 
 const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
     
@@ -20,7 +18,7 @@ const PlayerDataView = ({ game, playerOnTheMove, playerState }) => {
 
 
         <div className={`playerDataViewDiv ${playerOnTheMoveDiv}`}>
-            <img src={profile} width="200" height="100" />
+            <img src={profile} alt="" width="200" height="100" />
             <div >
                 <h4>{playerState.user.userName}</h4>
             </div>

@@ -4,9 +4,12 @@
 }
 
 .DonkeyGameTitle{
-    font-size: 50px;
+    font-size: 350px;
     color: aquamarine;
+    text-align: center;
+
 }
+
 
 /* .loginBox *{
     margin: 3px;

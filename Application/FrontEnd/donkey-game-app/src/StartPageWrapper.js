@@ -18,7 +18,7 @@ const theme = createTheme({
     },
 });
 
-function StartPage() {
+function StartPageWrapper() {
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -28,4 +28,4 @@ function StartPage() {
     )
 }
 
-export default StartPage;
+export default StartPageWrapper;

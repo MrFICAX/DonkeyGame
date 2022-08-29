@@ -32,24 +32,25 @@ const LoginForm = ({
           type={type}
           name="password"
           label="Password"
-          className = "textfield"
+          className="textfield"
           value={user.password}
           onChange={onPwChange}
         />
         <br />
         <br />
-        <Button variant = "contained"
+        <Button variant="contained"
           className="loginSubmit"
+          color="primary"
           primary={true.toString()}
           type="submit"
           label="submit"
         >LOG IN
         </Button>
       </form>
-      <p>
+      <h4>
         Don't have an account? <br />
         <a href="/signup" >Sign up here</a>
-      </p>
+      </h4>
     </div>
   );
 };

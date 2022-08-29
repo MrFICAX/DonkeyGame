@@ -1,7 +1,6 @@
-import profile from '../../src/profile.svg';
+import profile from '../../../src/profile.svg';
 import Button from '@material-ui/core/Button';
-import logo from '../card-photos/back_of_card.png';
-import CardsList from './CardsList'
+import CardsList from './CardsList.js'
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Dialog from "@material-ui/core/Dialog";
@@ -10,7 +9,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import LayedUserView from './LayedUserView.js'
-import { HubConnection } from '@microsoft/signalr';
 
 const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerState, connectionProp }) => {
 
@@ -67,7 +65,6 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
     //var game = localStorage.getItem('game') ? JSON.parse(localStorage.getItem('game')) : [];
 
     var loggedUsername = localStorage.username
-    var loggedUserID = localStorage.userID
     var loggedEmail = localStorage.email
     var donkey = "donkey"
     var tmpDonkey = donkey.slice(0, playerState.points) + "_".repeat(donkey.length - playerState.points)
@@ -206,7 +203,7 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
 
 
         <div className={`playerDataViewDiv ${playerOnTheMoveDiv}`}>
-            <img src={profile} width="200" height="100" />
+            <img src={profile} alt="" width="200" height="100" />
             <div >
                 <h4>{loggedUsername}</h4>
             </div>
@@ -218,7 +215,7 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
 
             <CardsList game={game} playerState={playerState} cards={myCards} sameNameOfAllCards={sameNameOfAllCards} layDownHand={layDownHand} playerOnTheMove={playerOnTheMove} loggedUsername={loggedUsername} ></CardsList>
 
-            <Dialog open={dialogOpened} /*onClose={handleToClose} */ >
+            <Dialog open={dialogOpened} fullWidth maxWidth="lg"/*onClose={handleToClose} */ >
                 <DialogTitle>{"Waiting for others to lay hand.."}</DialogTitle>
                 <DialogContent>
                     <div className='lobbyDiv'>
@@ -248,13 +245,7 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
                     }
                 </DialogActions>
             </Dialog>
-
         </div>
-
-        // <div>
-        //     <h3>{username}</h3>
-        //     <h3>{email}</h3>
-        // </div>
     );
 }
 

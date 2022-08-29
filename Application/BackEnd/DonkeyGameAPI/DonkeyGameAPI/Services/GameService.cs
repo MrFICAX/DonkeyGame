@@ -140,7 +140,7 @@ namespace DonkeyGameAPI.Services
             var player = game.Players.Find(p => p.User.UserID == userLoserID);
             player.Points++;
 
-            if (player.Points == "Magarac".Length)
+            if (player.Points == "Donkey".Length)
             {
                 game.LoserPlayer = player.User;
                 unitOfWork.GameRepository.Update(game);

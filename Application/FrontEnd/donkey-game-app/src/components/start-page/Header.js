@@ -3,7 +3,7 @@ import logo from '../../donkeyGamelogo.svg';
 
 function Header({ logoutHandle, buttonVisible, buttonText }) {
     return (
-        <div className="navDiv">
+        <div className="navDiv ">
             <div className='TitleDiv'>
                 <h1 className='pageTitle'>DONKEY GAME</h1>
                 <img src={logo} width="200" height="100" />

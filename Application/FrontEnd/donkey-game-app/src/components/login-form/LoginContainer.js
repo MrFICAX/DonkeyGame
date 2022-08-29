@@ -194,7 +194,7 @@ export default class LoginContainer extends Component {
 
     render() {
         return (
-            <div>
+            <div className="gameLobbyDivSignUpLogin">
                 <LoginForm
                     onSubmit={this.validateForm}
                     onChange={this.handleChange}

@@ -75,10 +75,10 @@ const SignUpForm = ({
           label="submit"
         >SIGN UP</Button>
       </form>
-      <p>
+      <h4>
         Already have an account? <br />
-        <a href="/" >Log in here</a>
-      </p>
+        <a href="/login" >Log in here</a>
+      </h4>
     </div>
   );
 };

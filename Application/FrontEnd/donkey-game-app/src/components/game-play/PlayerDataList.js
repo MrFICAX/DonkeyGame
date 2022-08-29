@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MyDataView from './MyDataView';
+import MyDataView from './MyDataView.js';
 import PlayerDataView from './PlayerDataView';
 
 export default class PlayerDataList extends Component {
@@ -21,7 +21,7 @@ export default class PlayerDataList extends Component {
     render() {
 
         return (
-            <div className="searchGame flexPlayersColumn">
+            <div className="playersDiv flexPlayersColumn">
 
                 <h1>Game started:</h1>
                 <h2></h2>

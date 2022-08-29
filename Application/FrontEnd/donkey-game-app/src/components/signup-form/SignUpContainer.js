@@ -164,7 +164,7 @@ export default class SignUpContainer extends Component {
 
   render() {
     return (
-      <div>
+      <div className="gameLobbyDivSignUpLogin">
         <SignUpForm
           onSubmit={this.validateForm}
           onChange={this.handleChange}

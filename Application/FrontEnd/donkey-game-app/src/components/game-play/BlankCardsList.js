@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import MyDataView from './MyDataView';
-import PlayerDataView from './PlayerDataView';
-import logo from '../card-photos/back_of_card.png';
 import SingleCard from './SingleCard';
 
 export default class BlankCardsList extends Component {

@@ -64,26 +64,6 @@ form {
   }
 }
 
-.box {
-  color: rgb(131, 126, 130);
-  font-size: 100%;
-  font-weight: bold;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wrapper {
-  width: 100%;
-  height: 100%;
-  background-image: url("http://127.0.0.1:10000/devstoreaccount1/rizzyco-container/RizzyCoMap.png");
-  background-size: 100% 100%;
-  background-position: center;
-  position: relative;
-}
-
 img {
   z-index: -1;
 }
@@ -162,10 +142,11 @@ h1 {
   font-weight: bold;
   font-size: large;
   display: flex;
-  background-color: tan;
   flex-direction: row;
   align-items: center;
   padding: 5px;
+  background-color: yellowgreen;
+  border-radius: 30px;
 }
 .logoutDiv * {
   padding: 15px;
@@ -188,7 +169,24 @@ h1 {
   justify-content: space-around;
   font-size: large;
   width: 70%;
+  margin: auto;
+}
 
+.gameFinished{
+  background-color: red;
+}
+
+.notFinished{
+  background-color: rgb(3, 232, 3);
+}
+
+.searchNCreateDiv{
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  font-size: large;
+  width: 80%;
   margin: auto;
 }
 

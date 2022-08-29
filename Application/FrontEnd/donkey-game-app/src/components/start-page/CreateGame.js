@@ -11,53 +11,16 @@ export default function CreateGame() {
     const [gameCode, setGameCode] = useState("");
     const [showSpinner, setShowSpinner] = useState(false);
 
-    // function CreateGame() {
-    //     setShowSpinner(true);
-    //     fetch("https://localhost:5225/Game/CreateGame", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({ "gameCode": gameCode })
-    //     }).then(p => {
-    //         if (p.ok) {
-    //             setShowSpinner(false);
-    //             p.json().then(data => {
-    //                 localStorage.setItem("gameCode", data.gameCode);
-    //                 console.log(data);
-    //                 // window.location.replace("/Sobe");
-    //             });
-    //         }
-    //         else {
-    //             console.log("Game not created!");
-    //             setShowSpinner(false);
-    //         }
-    //     }).catch(exc => {
-    //         console.log("Game not created!");
-    //         setShowSpinner(false);
-    //     });
-    // }
-
     function handleCreateGame() {
-        //const usernames = [];
-
-        // players.filter(player => player.complete === true).forEach(element => {
-        //     usernames.push(element.username);
-        // });
-
-        // var msg = {
-        //     "users": usernames,
-        //     "game": {
-        //         gameOwnerID: localStorage.userID,
-        //         gameCode: parseInt(localStorage.gameCode)
-        //     }
-        // }
-
         var value = 'default'
         if (gameCode !== "")
-            value = gameCode;//setGameCode("default");
+            value = gameCode;
         fetchCreateGame(value)
     }
 
     function fetchCreateGame(value) {
+        setShowSpinner(true);
+
         fetch("https://localhost:5225/Game/CreateGame/" + localStorage.userID + "/" + value, {
             method: "POST",
             headers: {
@@ -65,6 +28,7 @@ export default function CreateGame() {
             }
             //body: JSON.stringify(msg)
         }).then(res => {
+            setShowSpinner(false);
             if (res.ok) {
                 res.json().then(async result => {
                     localStorage.game = result;
@@ -75,16 +39,16 @@ export default function CreateGame() {
                 window.location.href = "/gameLobby"
 
             } else {
+                
                 alert("Game not created")
                 setGameCode("")
-                // this.setState({
-                //     errors: { message: res.message }
-                // });
             }
         })
             .catch(err => {
                 console.log("Create game error: ", err);
                 setGameCode("")
+                setShowSpinner(false);
+
             });
     }
 

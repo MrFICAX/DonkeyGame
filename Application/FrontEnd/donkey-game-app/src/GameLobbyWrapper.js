@@ -6,7 +6,7 @@ import green from '@material-ui/core/colors/green';
 // import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { ThemeProvider } from '@material-ui/styles';
 import './style/index.css'
-import Welcome from './welcome-page/Welcome';
+import GameLobby from './components/waiting-lobby/GameLobby';
 
 const theme = createTheme({
     palette: {
@@ -18,14 +18,12 @@ const theme = createTheme({
     },
 });
 
-function WelcomeFunc() {
+function GameLobbyWrapper() {
     return (
-        <>
             <ThemeProvider theme={theme}>
-                <Welcome />
+                <GameLobby />
             </ThemeProvider >
-        </>
     )
 }
 
-export default WelcomeFunc;
+export default GameLobbyWrapper;

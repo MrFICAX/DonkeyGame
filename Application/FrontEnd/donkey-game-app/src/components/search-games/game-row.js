@@ -97,23 +97,25 @@ export default class GameRow extends React.Component {
         }
     }
     render() {
-        const product = this.props.game;
+        const game = this.props.game;
         const myPlayerState = this.state.game.players.find(singlePlayerState => {
             return singlePlayerState.user.userID === parseInt(localStorage.userID)
         })
 
-        const name = product.stocked ?
-            product.name :
-            <span style={{ color: 'red' }}>
-                {product.name}
-            </span>;
+        const gameFinished = game.loserPlayer ?
+            "gameFinished" : "";
+
+        const notFinished = game.playerOnTheMove && !game.loserPlayer ?
+            "notFinished" : "";
 
         return (
-            <tr>
+            <tr className={`${gameFinished} ${notFinished}`}>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.gameOwner.userName}</td>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.gameCode}</td>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.players.length}</td>
                 <td style={{ "borderWidth": "2px" }}>{this.props.game.playerOnTheMove?.userName}</td>
+                <td style={{ "borderWidth": "2px" }}>{this.props.game.loserPlayer?.userName}</td>
+
 
                 <td style={{ "borderWidth": "2px" }}>
                     {this.state.game.gameOwner.email === localStorage.email &&

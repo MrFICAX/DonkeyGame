@@ -1,20 +1,16 @@
 import { useState } from 'react';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import Chat from './chat/Chat';
+import Chat from './components/chat/Chat';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from '@material-ui/core/Button';
 import { useEffect } from 'react';
 
-const ChatOverall = (props) => {
+const GameNChatConnection = (props) => {
     const [connection, setConnection] = useState(undefined);
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
-    const [isDisabled, setDisabled] = useState(false);
-    const [chatName, setChatName] = useState(props.gameCode);
-    const [game, setGame] = useState(props.game);
-
-
+    const [chatName] = useState(props.gameCode);
+    const [game] = useState(props.game);
 
     useEffect(() => {
 
@@ -268,7 +264,6 @@ const ChatOverall = (props) => {
             props.setConnection(connection)
             localStorage.connection = JSON.stringify(connection)
             window.dispatchEvent(new Event("connectionSet"));
-            setDisabled(true);
 
         } catch (e) {
             console.log(e);
@@ -343,4 +338,4 @@ const ChatOverall = (props) => {
     </div>
 }
 
-export default ChatOverall;
+export default GameNChatConnection;

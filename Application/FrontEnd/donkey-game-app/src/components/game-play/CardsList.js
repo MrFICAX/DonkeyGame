@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import MyDataView from './MyDataView';
-import PlayerDataView from './PlayerDataView';
-import logo from '../card-photos/back_of_card.png';
 import SingleCard from './SingleCard';
 import Button from '@material-ui/core/Button';
 
@@ -71,7 +68,7 @@ export default class CardsList extends Component {
     handleClick(card) {
         if (this.state.playerOnTheMove.userName === this.state.loggedUsername) {
 
-            if (this.state.selectedCard.name === card.name && this.state.selectedCard.value == card.value) {
+            if (this.state.selectedCard.name === card.name && this.state.selectedCard.value === card.value) {
                 this.setState({
                     selectedCard: { name: "", value: "" },
                     btnClickable: false,
@@ -110,17 +107,17 @@ export default class CardsList extends Component {
                     <div className='cardsDiv'>
                         {
                             this.state.cards.myCards.map((card, index) => {
-                                return <SingleCard key={index} card={card} turnsPassedWithSpecialCard={this.state.turnsPassedWithSpecialCard} selectedCard={this.state.selectedCard} handleClick={this.handleClick}></SingleCard>
+                                return <SingleCard key={index} card={card} loggedUsername={this.state.loggedUsername} playerOnTheMoveUsername={this.state.playerOnTheMove.userName} turnsPassedWithSpecialCard={this.state.turnsPassedWithSpecialCard} selectedCard={this.state.selectedCard} handleClick={this.handleClick}></SingleCard>
                             })
                         }
                     </div>
                 </div>
 
-                {this.state.playerOnTheMove.userName == this.state.loggedUsername &&
-                    <Button className="passACardButton" disabled={!this.state.btnClickable} color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handlePassSelectedCard()}>PASS SELECTED CARD</Button>
+                {this.state.playerOnTheMove.userName === this.state.loggedUsername &&
+                    <Button className="passACardButton " disabled={!this.state.btnClickable} color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handlePassSelectedCard()}>PASS SELECTED CARD</Button>
                 }
 
-                <Button className="passACardButton" /*disabled={!this.state.sameNameOfAllCards}*/ color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleLayDownHand()}>LAY DOWN HAND </Button>
+                <Button className="passACardButton m-1" disabled={!this.state.sameNameOfAllCards} color="primary" variant="contained" id="buttonJoinGame" onClick={() => this.handleLayDownHand()}>LAY DOWN HAND </Button>
 
 
                 {/* <div className='flexRow'>

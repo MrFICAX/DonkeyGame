@@ -1,32 +1,24 @@
 import React from "react";
-// import Signup from "./Signup";
-// import Login from "./Login";
-// import Lobby from "./Lobby";
-// import Game from "./Game";
-// import WaitingLobby from "./WaitingLobby";
-// import "./style/index.css";
-import Login from './Login'
+import LoginWrapper from './LoginWrapper'
 import {
   BrowserRouter as Router,
   Routes,
   Route
 } from "react-router-dom";
-import SignUp from "./SignUp";
-import StartPage from "./StartPage";
-import WelcomeFunc from "./WelcomeFunc";
-import GameLobby from "./components/waiting-lobby/GameLobby";
+import SignUpWrapper from "./SignUpWrapper";
+import StartPageWrapper from "./StartPageWrapper";
+import WelcomeWrapper from "./WelcomeWrapper";
+import GameLobbyWrapper from "./GameLobbyWrapper";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/" element={<Welcome />} /> */}
-        <Route path="/" element={<WelcomeFunc />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/gameLobby" element={<GameLobby />} />
-        {/* <Route path="/search" element={<SearchComponent />} /> */}
-        <Route path="/startpage" element={<StartPage />} />
+        <Route path="/" element={<WelcomeWrapper />} />
+        <Route path="/login" element={<LoginWrapper />} />
+        <Route path="/signup" element={<SignUpWrapper />} />
+        <Route path="/gameLobby" element={<GameLobbyWrapper />} />
+        <Route path="/startpage" element={<StartPageWrapper />} />
       </Routes>
     </Router>
   );

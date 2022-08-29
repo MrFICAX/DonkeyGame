@@ -1,33 +1,19 @@
 
 import React from 'react'
-import { ThemeProvider } from '@material-ui/styles';
-import { createTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import green from '@material-ui/core/colors/green';
-import SearchComponent from "../search-games/search-games";
 import Header from '../start-page/Header.js';
-import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import ChatOverall from '../../ChatOverall';
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import GameNChatConnection from '../../GameNChatConnection';
 import PlayerList from './player-list';
 import { Button } from '@material-ui/core';
-import PlayerDataList from '../../game-play/PlayerDataList';
+import PlayerDataList from '../game-play/PlayerDataList';
 import Moment from 'moment';
 import Dialog from "@material-ui/core/Dialog";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import LayedUserView from "../../game-play/LayedUserView.js"
+import LayedUserView from "../game-play/LayedUserView.js"
 
-const theme = createTheme({
-    palette: {
-        primary: purple,
-        secondary: green,
-    },
-    status: {
-        danger: 'orange',
-    },
-});
 export default class GameLobby extends React.Component {
     constructor(props) {
         super(props);
@@ -40,7 +26,7 @@ export default class GameLobby extends React.Component {
             connection: "",
             gameConnection: "",
             messages: [],
-            users: ["marko", "jovan"]
+            users: []
         }
 
         this.removePlayerFromGame = this.removePlayerFromGame.bind(this);
@@ -59,10 +45,10 @@ export default class GameLobby extends React.Component {
         this.connectChat();
         window.addEventListener("storageGame", () => {
             var updatedGame = JSON.parse(localStorage.game) || []
-            var myPlayerState = updatedGame.players.find(playerState => playerState.user.userID == localStorage.userID)
+            var myPlayerState = updatedGame.players.find(playerState => playerState.user.userID === parseInt(localStorage.userID))
 
-            if (myPlayerState == undefined) {
-                var text = this.state.game.gameOwner.userName + " removed you from game with gameCode: " + this.state.game.gameCode + " !"
+            if (myPlayerState === undefined) {
+                //var text = this.state.game.gameOwner.userName + " removed you from game with gameCode: " + this.state.game.gameCode + " !"
                 //alert(text)
                 window.location.href = '/startPage';
                 //localStorage.myCards = null;
@@ -176,7 +162,7 @@ export default class GameLobby extends React.Component {
 
                 });
 
-            } else if (res.status == 405) {
+            } else if (res.status === 405) {
                 this.setState({
                     errors: { message: "Unable to join again!" }
                 });
@@ -216,7 +202,7 @@ export default class GameLobby extends React.Component {
 
                 });
 
-            } else if (res.status == 405) {
+            } else if (res.status === 405) {
                 this.setState({
                     errors: { message: "Unable to join again!" }
                 });
@@ -272,7 +258,7 @@ export default class GameLobby extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="gameLobbyDiv">
                 {this.state.game.gameOwner.email === localStorage.email &&
                     <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
                     // :
@@ -285,7 +271,7 @@ export default class GameLobby extends React.Component {
                     <Header logoutHandle={this.goBackToStartGamePage} buttonVisible={true} buttonText={"GO BACK"} ></Header>
                 }
 
-                <div className="searchGame gameLobbyDiv">
+                <div className="gameStartedDiv ">
                     <h1>Game code: {this.state.game.gameCode}</h1>
                     <h2>Game owner: {this.state.game.gameOwner.userName}</h2>
                     <h2>Game owner email: {this.state.game.gameOwner.email}</h2>
@@ -307,7 +293,7 @@ export default class GameLobby extends React.Component {
 
                     {this.state.game.loserPlayer &&
 
-                        <Dialog open={true} /*onClose={handleToClose} */ >
+                        <Dialog open={true} fullWidth maxWidth="lg"/*onClose={handleToClose} */ >
                             <DialogTitle>{"GAME FINISHED"}</DialogTitle>
                             <DialogContent>
                                 <div className='lobbyDiv'>
@@ -340,7 +326,8 @@ export default class GameLobby extends React.Component {
 
                 </div>
                 <div>
-                    <ChatOverall getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} setConnection={this.setConnection} game={this.state.game} />
+                    <GameNChatConnection
+                 getMyCards={this.getMyCards} gameCode={this.state.game.gameCode} setConnection={this.setConnection} game={this.state.game} />
                 </div>
             </div>
         );

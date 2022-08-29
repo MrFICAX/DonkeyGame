@@ -1,4 +1,4 @@
-import profile from '../../src/profile.svg';
+import profile from '../../../src/profile.svg';
 
 const LayedUserView = ({ username, email, loserPlayer, loserPlayerFound }) => {
 
