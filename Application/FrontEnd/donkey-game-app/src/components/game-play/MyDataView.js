@@ -42,14 +42,19 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
 
     useEffect(() => {
 
-        if (myCards.myCards.length !== 0) {
-            if (myCards.myCards[0].value === myCards.myCards[1].value &&
-                myCards.myCards[0].value === myCards.myCards[2].value &&
-                myCards.myCards[0].value === myCards.myCards[3].value) {
-                setSameNameOfAllCards(true);
-            }
-            else {
-                setSameNameOfAllCards(false);
+        if (myCards.myCards.find(card => card.value === 2)) {
+            setSameNameOfAllCards(false);
+        } else {
+
+            if (myCards.myCards.length !== 0) {
+                if (myCards.myCards[0].value === myCards.myCards[1].value &&
+                    myCards.myCards[0].value === myCards.myCards[2].value &&
+                    myCards.myCards[0].value === myCards.myCards[3].value) {
+                    setSameNameOfAllCards(true);
+                }
+                else {
+                    setSameNameOfAllCards(false);
+                }
             }
         }
     }, [myCards]);
@@ -81,7 +86,7 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
     window.addEventListener("closeDialog", () => {
         setLayDownHandClicked(false)
         setDialogOpened(false)
-        
+
 
     });
 
@@ -95,7 +100,7 @@ const MyDataView = ({ game, playerOnTheMove, clickOnCard, playerStates, playerSt
 
             setDialogOpened(true);
 
-            if (parseInt(playerStateID) === playerState.playerStateID){
+            if (parseInt(playerStateID) === playerState.playerStateID) {
                 setLayDownHandClicked(true);
             }
         })

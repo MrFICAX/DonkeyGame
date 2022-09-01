@@ -93,10 +93,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHub<GameHub>("/game");
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapHub<GameHub>("/game");
+//});
 
 app.UseEndpoints(endpoints =>
 {

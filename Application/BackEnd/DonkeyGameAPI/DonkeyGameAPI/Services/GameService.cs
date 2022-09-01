@@ -129,7 +129,6 @@ namespace DonkeyGameAPI.Services
             //            var game = unitOfWork.GameRepository.GetIncludes(g => g.Players).SingleOrDefault(g => g.GameID == gameID);
             var game = unitOfWork.GameRepository.GetGameWithPlayerStatesAndCardsAndUserData(gameID);
 
-            //OVO OBAVEZNO OTKOMENTARISATI 
             //if (game.Players.Count != 4)
             //{
             //    return null;
